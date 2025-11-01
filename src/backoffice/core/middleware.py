@@ -7,11 +7,10 @@ from fastapi.security import HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.backoffice.apps.account.schemas import UserProfile
-from src.backoffice.apps.account.services.jwt_service import jwt_service
-from src.backoffice.apps.account.services.user_service import UserService
+from src.backoffice.apps.account.services import UserService, jwt_service
 from src.backoffice.apps.account.utils import verify_password
 from src.backoffice.core.context import request_id_ctx_var, user_id_ctx_var
-from src.backoffice.core.dependencies.database import get_session
+from src.backoffice.core.dependencies import get_session
 from src.backoffice.core.logging import get_logger
 
 

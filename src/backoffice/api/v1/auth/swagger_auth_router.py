@@ -1,9 +1,7 @@
 from fastapi import APIRouter
 
 from src.backoffice.apps.account.models import User
-from src.backoffice.core.dependencies.auth import BasicAuthUserDep
-from src.backoffice.core.dependencies.service_dependencies import \
-    AccountApplicationDep
+from src.backoffice.core.dependencies import AccountApplicationDep, BasicAuthUserDep
 
 router = APIRouter(prefix="/swagger-auth", tags=["swagger-auth"])
 

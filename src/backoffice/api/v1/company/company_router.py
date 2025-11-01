@@ -2,11 +2,12 @@ from typing import List
 
 from fastapi import APIRouter, status
 
-from src.backoffice.apps.company.schemas import (CompanyCreate, CompanyOut,
-                                                 CompanyShortOut)
-from src.backoffice.core.dependencies.auth import AnyAuthUserDep
-from src.backoffice.core.dependencies.service_dependencies import \
-    CompanyApplicationDep
+from src.backoffice.apps.company.schemas import (
+    CompanyCreate,
+    CompanyOut,
+    CompanyShortOut,
+)
+from src.backoffice.core.dependencies import AnyAuthUserDep, CompanyApplicationDep
 
 router = APIRouter(prefix="/companies", tags=["companies"])
 

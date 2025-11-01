@@ -2,12 +2,15 @@ import base64
 from typing import Annotated, TypeAlias
 
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import (HTTPAuthorizationCredentials, HTTPBasic,
-                              HTTPBasicCredentials, HTTPBearer)
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBasic,
+    HTTPBasicCredentials,
+    HTTPBearer,
+)
 
 from src.backoffice.apps.account.schemas import UserProfile
-from src.backoffice.apps.account.services.jwt_service import jwt_service
-from src.backoffice.apps.account.services.user_service import UserService
+from src.backoffice.apps.account.services import UserService, jwt_service
 from src.backoffice.apps.account.utils import verify_password
 
 from .database import SessionDep
@@ -106,7 +109,7 @@ async def get_request_user_any_auth(
             credentials = HTTPBasicCredentials(username=username, password=password)
 
             return await get_request_user_basic_auth(credentials, session)
-        except (ValueError, IndexError, UnicodeDecodeError):
+        except (ValueError, IndexError):
             # Invalid Basic Auth encoding, will fall through to raise 401
             pass
 

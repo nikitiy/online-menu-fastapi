@@ -2,11 +2,12 @@ from typing import Optional
 
 from fastapi import APIRouter, File, Form, Query, UploadFile, status
 
-from src.backoffice.apps.menu.schemas.menu_item import (MenuItemCreate,
-                                                        MenuItemResponse,
-                                                        MenuItemUpdate)
-from src.backoffice.core.dependencies.service_dependencies import (
-    MenuApplicationDep)
+from src.backoffice.apps.menu.schemas.menu_item import (
+    MenuItemCreate,
+    MenuItemResponse,
+    MenuItemUpdate,
+)
+from src.backoffice.core.dependencies import MenuApplicationDep
 
 router = APIRouter(prefix="/menu", tags=["menu-items"])
 

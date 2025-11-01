@@ -1,14 +1,19 @@
 from fastapi import APIRouter
 
-from src.backoffice.apps.account.schemas import (LoginRequest, OAuthProvider,
-                                                 OAuthProviders,
-                                                 RefreshTokenRequest,
-                                                 RegisterRequest, Token,
-                                                 UserProfile)
+from src.backoffice.apps.account.schemas import (
+    LoginRequest,
+    OAuthProvider,
+    OAuthProviders,
+    RefreshTokenRequest,
+    RegisterRequest,
+    Token,
+    UserProfile,
+)
 from src.backoffice.core.config import auth_settings
-from src.backoffice.core.dependencies.auth import RequiredRequestUserDep
-from src.backoffice.core.dependencies.service_dependencies import \
-    AccountApplicationDep
+from src.backoffice.core.dependencies import (
+    AccountApplicationDep,
+    RequiredRequestUserDep,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

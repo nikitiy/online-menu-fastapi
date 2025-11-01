@@ -5,13 +5,19 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backoffice.apps.account.models import User
-from src.backoffice.apps.account.schemas import (LoginRequest, RegisterRequest,
-                                                 Token, UserCreate, UserLogin)
-from src.backoffice.apps.account.services.jwt_service import jwt_service
-from src.backoffice.apps.account.services.oauth_account_service import \
-    OAuthAccountService
-from src.backoffice.apps.account.services.token_service import TokenService
-from src.backoffice.apps.account.services.user_service import UserService
+from src.backoffice.apps.account.schemas import (
+    LoginRequest,
+    RegisterRequest,
+    Token,
+    UserCreate,
+    UserLogin,
+)
+from src.backoffice.apps.account.services import (
+    OAuthAccountService,
+    TokenService,
+    UserService,
+    jwt_service,
+)
 from src.backoffice.core.config import auth_settings
 from src.backoffice.core.dependencies import SessionDep
 

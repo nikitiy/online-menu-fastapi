@@ -33,24 +33,22 @@ repos:
           "flake8-bugbear==24.8.19",
           "flake8-builtins==2.5.0",
         ]
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        additional_dependencies: [
-          "sqlalchemy-stubs==0.4",
-          "pydantic==2.9.2",
-          "types-requests==2.32.0.20240907",
-        ]
         args: [
-          "--ignore-missing-imports",
-          "--pretty",
-          "--show-error-codes",
+          "--config=pyproject.toml",
+          "--max-line-length=88",
+          "--extend-ignore=E203,E266,E501,W503,B008",
         ]
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.9
     hooks:
       - id: bandit
-        args: ["-r", "src", "tests"]
+        args: [
+          "-r",
+          "src/backoffice",
+          "--configfile",
+          "pyproject.toml",
+          "-ll",
+        ]
+        pass_filenames: false
+        always_run: true

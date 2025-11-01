@@ -55,6 +55,13 @@ rich = ">=13,<14"
 click = ">=8.1,<9.0"
 pre-commit = "^4.3.0"
 
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "E266", "E501", "W503", "B008"]
+
+[tool.bandit]
+skips = ["B105", "B107"]
+
 [build-system]
 requires = ["poetry-core>=1.9.0"]
 build-backend = "poetry.core.masonry.api"

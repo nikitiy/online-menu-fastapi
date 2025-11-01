@@ -3,11 +3,13 @@ from typing import Tuple
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backoffice.apps.account.models import User
-from src.backoffice.apps.account.schemas import (LoginRequest, RegisterRequest,
-                                                 Token)
-from src.backoffice.apps.account.services.auth_service import AuthService
-from src.backoffice.apps.account.services.oauth_service import (
-    GoogleOAuthService, VKOAuthService, YandexOAuthService)
+from src.backoffice.apps.account.schemas import LoginRequest, RegisterRequest, Token
+from src.backoffice.apps.account.services import (
+    AuthService,
+    GoogleOAuthService,
+    VKOAuthService,
+    YandexOAuthService,
+)
 
 
 class AccountApplication:

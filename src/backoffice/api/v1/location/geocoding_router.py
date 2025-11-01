@@ -3,10 +3,13 @@ from typing import List
 from fastapi import APIRouter
 
 from src.backoffice.apps.location.schemas.geocoding import (
-    GeocodingRequest, GeocodingResultResponse, GeocodingSearchRequest,
-    GeocodingSearchResponse, ReverseGeocodingRequest)
-from src.backoffice.core.dependencies.service_dependencies import \
-    LocationApplicationDep
+    GeocodingRequest,
+    GeocodingResultResponse,
+    GeocodingSearchRequest,
+    GeocodingSearchResponse,
+    ReverseGeocodingRequest,
+)
+from src.backoffice.core.dependencies import LocationApplicationDep
 
 router = APIRouter(prefix="/geocoding", tags=["geocoding"])
 

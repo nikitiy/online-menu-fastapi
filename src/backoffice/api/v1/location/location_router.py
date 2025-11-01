@@ -2,15 +2,20 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Query
 
-from src.backoffice.apps.location.schemas import (AddressCreate,
-                                                  AddressResponse, CityCreate,
-                                                  CityResponse, CountryCreate,
-                                                  CountryResponse,
-                                                  CountryUpdate, RegionCreate,
-                                                  RegionResponse, StreetCreate,
-                                                  StreetResponse)
-from src.backoffice.core.dependencies.service_dependencies import \
-    LocationApplicationDep
+from src.backoffice.apps.location.schemas import (
+    AddressCreate,
+    AddressResponse,
+    CityCreate,
+    CityResponse,
+    CountryCreate,
+    CountryResponse,
+    CountryUpdate,
+    RegionCreate,
+    RegionResponse,
+    StreetCreate,
+    StreetResponse,
+)
+from src.backoffice.core.dependencies import LocationApplicationDep
 
 router = APIRouter(prefix="/locations", tags=["locations"])
 
