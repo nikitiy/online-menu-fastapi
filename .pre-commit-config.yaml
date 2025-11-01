@@ -54,12 +54,3 @@ repos:
     hooks:
       - id: bandit
         args: ["-r", "src", "tests"]
-
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest quick
-        entry: poetry run pytest -q
-        language: system
-        pass_filenames: false
-        stages: [push]

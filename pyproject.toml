@@ -53,6 +53,7 @@ mypy = ">=1.7,<2.0"
 pylint = ">=3,<4"
 rich = ">=13,<14"
 click = ">=8.1,<9.0"
+pre-commit = "^4.3.0"
 
 [build-system]
 requires = ["poetry-core>=1.9.0"]
