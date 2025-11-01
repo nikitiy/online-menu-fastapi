@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,6 +13,14 @@ class MenuApplication:
         self.session = session
         self.menu_item_service = MenuItemService(session)
         self.menu_image_service = MenuImageService(session)
+
+    async def get_menu_item_by_slug(self, slug: str) -> Optional[MenuItem]:
+        return await self.menu_item_service.get_by_slug(slug)
+
+    async def list_menu_items(
+        self, category_id: Optional[int] = None
+    ) -> List[MenuItem]:
+        return await self.menu_item_service.list(category_id=category_id)
 
     async def create_menu_item(self, menu_item_data: MenuItemCreate) -> MenuItem:
         menu_item = await self.menu_item_service.create(menu_item_data)

@@ -6,7 +6,7 @@ from src.backoffice.apps.menu.schemas.menu_item import (MenuItemCreate,
                                                         MenuItemResponse,
                                                         MenuItemUpdate)
 from src.backoffice.core.dependencies.service_dependencies import (
-    MenuApplicationDep, MenuItemServiceDep)
+    MenuApplicationDep)
 
 router = APIRouter(prefix="/menu", tags=["menu-items"])
 
@@ -21,15 +21,15 @@ async def create_menu_item(
 
 @router.get("/", response_model=list[MenuItemResponse])
 async def list_menu_items(
-    menu_item_service: MenuItemServiceDep,
+    application: MenuApplicationDep,
     category_id: Optional[int] = Query(None, description="Filter by category ID"),
 ):
-    return await menu_item_service.list(category_id=category_id)
+    return await application.list_menu_items(category_id=category_id)
 
 
 @router.get("/{slug}", response_model=MenuItemResponse)
-async def get_menu_item(slug: str, menu_item_service: MenuItemServiceDep):
-    return await menu_item_service.get_by_slug(slug)
+async def get_menu_item(slug: str, application: MenuApplicationDep):
+    return await application.get_menu_item_by_slug(slug)
 
 
 @router.patch("/{slug}", response_model=MenuItemResponse)
