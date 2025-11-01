@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+.env.*
+.env
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache/
+.pytest_cache/
+coverage.xml
+*.cover
+*.py,cover
+
+# Type checker caches
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Logs
+*.log
+logs/
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+**/node_modules/
+.docker/
+Dockerfile.local
+docker-compose.override.yml
+
+# Images and generated assets
+staticfiles/
+media/
+
+# SQLAlchemy/Alembic
+alembic/versions/__pycache__/
+
+# Misc
+.ipynb_checkpoints/
+
+.github
+TODO.md
