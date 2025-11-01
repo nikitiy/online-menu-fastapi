@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from src.backoffice.core.config import auth_settings
 
@@ -13,7 +12,6 @@ class JWTService:
         self.algorithm = auth_settings.algorithm
         self.access_token_expire_minutes = auth_settings.access_token_expire_minutes
         self.refresh_token_expire_days = auth_settings.refresh_token_expire_days
-        self.pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
     def create_access_token(
         self, data: dict, expires_delta: Optional[timedelta] = None
@@ -65,12 +63,6 @@ class JWTService:
         if payload:
             return payload.get("user_id")
         return None
-
-    def hash_password(self, password: str) -> str:
-        return self.pwd_context.hash(password)
-
-    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return self.pwd_context.verify(plain_password, hashed_password)
 
 
 jwt_service = JWTService()
