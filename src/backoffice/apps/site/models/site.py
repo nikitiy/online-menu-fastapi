@@ -5,7 +5,7 @@ from src.backoffice.models import Base, IdMixin
 
 
 class Site(IdMixin, Base):
-    __tablename__ = "site"
+    __tablename__ = "sites"
 
     company_id: Mapped[int] = mapped_column(
         ForeignKey("companies.id", ondelete="CASCADE"),
@@ -14,4 +14,7 @@ class Site(IdMixin, Base):
     )
 
     # Relationships
-    company: Mapped["Company"] = relationship(back_populates="sites")  # type: ignore
+    company: Mapped["Company"] = relationship(  # type: ignore
+        "src.backoffice.apps.company.models.Company",
+        back_populates="site",
+    )

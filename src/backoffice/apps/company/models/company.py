@@ -4,9 +4,11 @@ from sqlalchemy import String, Text
 from sqlalchemy.dialects.postgresql import ENUM as PGEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.backoffice.apps.company.models.types import (CompanyEstablishmentType,
-                                                      CompanyRole,
-                                                      CuisineCategory)
+from src.backoffice.apps.company.models.types import (
+    CompanyEstablishmentType,
+    CompanyRole,
+    CuisineCategory,
+)
 from src.backoffice.models import Base, CreatedUpdatedMixin, IdMixin
 
 
@@ -36,13 +38,17 @@ class Company(Base, IdMixin, CreatedUpdatedMixin):
 
     # Relationships
     branches: Mapped[List["CompanyBranch"]] = relationship(  # type: ignore
-        "CompanyBranch",
         back_populates="company",
         cascade="all, delete-orphan",
     )
     members: Mapped[List["CompanyMember"]] = relationship(  # type: ignore
-        "CompanyMember",
         back_populates="company",
+        cascade="all, delete-orphan",
+    )
+    site: Mapped[Optional["Site"]] = relationship(  # type: ignore
+        "src.backoffice.apps.site.models.Site",
+        back_populates="company",
+        uselist=False,
         cascade="all, delete-orphan",
     )
 

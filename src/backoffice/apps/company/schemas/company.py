@@ -3,8 +3,10 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from src.backoffice.apps.company.models.types import (CompanyEstablishmentType,
-                                                      CuisineCategory)
+from src.backoffice.apps.company.models.types import (
+    CompanyEstablishmentType,
+    CuisineCategory,
+)
 
 
 class CompanyBase(BaseModel):
@@ -77,3 +79,6 @@ class CompanyShortOut(BaseModel):
     name: str
     description: Optional[str]
     subdomain: str
+
+    class Config:
+        from_attributes = True

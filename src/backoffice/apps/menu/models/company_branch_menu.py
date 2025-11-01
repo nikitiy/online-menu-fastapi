@@ -7,7 +7,7 @@ from src.backoffice.models import Base, IdMixin
 
 
 class CompanyBranchMenu(Base, IdMixin):
-    __tablename__ = "company_branches_menu"
+    __tablename__ = "company_branches_menus"
 
     company_branch_id: Mapped[int] = mapped_column(
         ForeignKey("company_branches.id", ondelete="CASCADE"),

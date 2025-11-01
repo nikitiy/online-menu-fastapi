@@ -41,3 +41,8 @@ class CompanyBranch(Base, IdMixin):
         back_populates="company_branch",
         cascade="all, delete-orphan",
     )
+    qr_codes: Mapped[List["QRCode"]] = relationship(  # type: ignore
+        "QRCode",
+        back_populates="company_branch",
+        cascade="all, delete-orphan",
+    )
