@@ -1,4 +1,4 @@
-from .auth import AnyAuthUserDep, BasicAuthUserDep, RequiredRequestUserDep
+from .auth import AnyAuthUserDep
 from .database import SessionDep, get_session
 from .service_dependencies import (
     AccountApplicationDep,
@@ -12,8 +12,6 @@ __all__ = [
     "SessionDep",
     "get_session",
     # Auth
-    "RequiredRequestUserDep",
-    "BasicAuthUserDep",
     "AnyAuthUserDep",
     # Services
     "AccountApplicationDep",

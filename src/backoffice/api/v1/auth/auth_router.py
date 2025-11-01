@@ -10,17 +10,14 @@ from src.backoffice.apps.account.schemas import (
     UserProfile,
 )
 from src.backoffice.core.config import auth_settings
-from src.backoffice.core.dependencies import (
-    AccountApplicationDep,
-    RequiredRequestUserDep,
-)
+from src.backoffice.core.dependencies import AccountApplicationDep, AnyAuthUserDep
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/me", response_model=UserProfile)
 async def get_request_user_profile(
-    request_user: RequiredRequestUserDep,
+    request_user: AnyAuthUserDep,
 ):
     """Get the request user's profile"""
     return request_user

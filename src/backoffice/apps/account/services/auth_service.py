@@ -12,14 +12,13 @@ from src.backoffice.apps.account.schemas import (
     UserCreate,
     UserLogin,
 )
-from src.backoffice.apps.account.services import (
-    OAuthAccountService,
-    TokenService,
-    UserService,
-    jwt_service,
-)
 from src.backoffice.core.config import auth_settings
-from src.backoffice.core.dependencies import SessionDep
+from src.backoffice.core.dependencies.database import SessionDep
+
+from .jwt_service import jwt_service
+from .oauth_account_service import OAuthAccountService
+from .token_service import TokenService
+from .user_service import UserService
 
 
 class AuthService:

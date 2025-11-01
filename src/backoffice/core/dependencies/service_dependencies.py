@@ -6,7 +6,7 @@ from src.backoffice.apps.account.application import AccountApplication
 from src.backoffice.apps.company.application import CompanyApplication
 from src.backoffice.apps.location.application import LocationApplication
 from src.backoffice.apps.menu.application import MenuApplication
-from src.backoffice.core.dependencies import SessionDep
+from src.backoffice.core.dependencies.database import SessionDep
 
 # ==================== SERVICE DEPENDENCIES ====================
 

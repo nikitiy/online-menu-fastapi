@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
 from src.backoffice.apps.account.models import User
-from src.backoffice.core.dependencies import AccountApplicationDep, BasicAuthUserDep
+from src.backoffice.core.dependencies import AccountApplicationDep, AnyAuthUserDep
 
 router = APIRouter(prefix="/swagger-auth", tags=["swagger-auth"])
 
 
 @router.post("/login")
 async def swagger_login(
-    account_app: AccountApplicationDep, request_user: BasicAuthUserDep
+    account_app: AccountApplicationDep, request_user: AnyAuthUserDep
 ):
     """
     Authorization via Swagger UI
