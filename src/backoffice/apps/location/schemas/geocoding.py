@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class GeocodingAccuracy(str, Enum):
@@ -80,8 +80,7 @@ class GeocodingResultResponse(GeocodingResultBase):
     created_at: datetime
     expires_at: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GeocodingSearchRequest(BaseModel):

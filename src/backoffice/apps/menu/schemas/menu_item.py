@@ -70,14 +70,11 @@ class MenuImageResponse(BaseModel):
     created_at: datetime = Field(..., description="Created at")
     updated_at: datetime = Field(..., description="Updated at")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MenuItemResponse(MenuItemBase):
     """Response menu item schema"""
-
-    model_config = ConfigDict(from_attributes=True)
 
     id: int
     slug: str
@@ -88,14 +85,16 @@ class MenuItemResponse(MenuItemBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class MenuItemListResponse(BaseModel):
     """Response menu item list schema"""
-
-    model_config = ConfigDict(from_attributes=True)
 
     items: List[MenuItemResponse]
     total: int
     page: int
     size: int
     pages: int
+
+    model_config = ConfigDict(from_attributes=True)

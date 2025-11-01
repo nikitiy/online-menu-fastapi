@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MenuImageBase(BaseModel):
@@ -45,8 +45,7 @@ class MenuImageResponse(MenuImageBase):
     updated_at: datetime = Field(..., description="Updated at")
     menu_item_id: int = Field(..., description="Menu item ID")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MenuImageListResponse(BaseModel):
