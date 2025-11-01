@@ -12,6 +12,13 @@ lint:
 	poetry run black --check src/
 	poetry run isort --check-only src/
 
+# Testing
+test:
+	poetry run pytest tests/ -v
+
+test-cov:
+	poetry run pytest tests/ -v --cov=src/backoffice --cov-report=html --cov-report=term
+
 format:
 	poetry run black src/
 	poetry run isort src/
