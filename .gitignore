@@ -80,5 +80,4 @@ alembic/versions/__pycache__/
 # Misc
 .ipynb_checkpoints/
 
-.github
 TODO.md
