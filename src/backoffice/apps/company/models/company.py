@@ -46,7 +46,6 @@ class Company(Base, IdMixin, CreatedUpdatedMixin):
         cascade="all, delete-orphan",
     )
     site: Mapped[Optional["Site"]] = relationship(  # type: ignore
-        "src.backoffice.apps.site.models.Site",
         back_populates="company",
         uselist=False,
         cascade="all, delete-orphan",

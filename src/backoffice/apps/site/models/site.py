@@ -15,6 +15,5 @@ class Site(IdMixin, Base):
 
     # Relationships
     company: Mapped["Company"] = relationship(  # type: ignore
-        "src.backoffice.apps.company.models.Company",
         back_populates="site",
     )

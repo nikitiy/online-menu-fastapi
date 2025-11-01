@@ -29,7 +29,6 @@ class CompanyService:
             cuisine_category=company_data.cuisine_category,
         )
 
-        # Create Site for the company
         await self.site_service.create_site(company.id)
 
         return company
