@@ -20,7 +20,7 @@ from src.backoffice.core.dependencies.database import get_session
 
 
 @pytest_asyncio.fixture
-async def test_user(test_db_session: AsyncSession) -> User:
+async def test_user(test_session: AsyncSession) -> User:
     password = "test_password_123"
     password_hash = get_password_hash(password)
     user = User(
@@ -29,18 +29,18 @@ async def test_user(test_db_session: AsyncSession) -> User:
         is_active=True,
         is_verified=True,
     )
-    test_db_session.add(user)
-    await test_db_session.commit()
-    await test_db_session.refresh(user)
+    test_session.add(user)
+    await test_session.commit()
+    await test_session.refresh(user)
     return user
 
 
 @pytest_asyncio.fixture
-async def test_app(test_db_session: AsyncSession):
+async def test_app(test_session: AsyncSession):
     app = create_app()
 
     async def override_get_session():
-        yield test_db_session
+        yield test_session
 
     app.dependency_overrides[get_session] = override_get_session
 
@@ -64,7 +64,7 @@ def create_basic_auth_header(email: str, password: str) -> str:
 
 @pytest.mark.asyncio
 async def test_create_company_endpoint_success(
-    client: httpx.AsyncClient, test_user: User, test_db_session: AsyncSession
+    client: httpx.AsyncClient, test_user: User, test_session: AsyncSession
 ):
     company_data = {
         "name": "New Restaurant",
@@ -93,13 +93,13 @@ async def test_create_company_endpoint_success(
     assert "created_at" in data
     assert "updated_at" in data
 
-    await test_db_session.refresh(test_user)
-    created_company = await test_db_session.get(Company, data["id"])
+    await test_session.refresh(test_user)
+    created_company = await test_session.get(Company, data["id"])
     assert created_company is not None
     assert created_company.name == "New Restaurant"
     assert created_company.subdomain == "new-restaurant"
 
-    result = await test_db_session.execute(
+    result = await test_session.execute(
         select(CompanyMember).where(
             CompanyMember.company_id == data["id"],
             CompanyMember.user_id == test_user.id,
@@ -132,7 +132,7 @@ async def test_create_company_endpoint_unauthorized(client: httpx.AsyncClient):
 async def test_create_company_endpoint_subdomain_taken(
     client: httpx.AsyncClient,
     test_user: User,
-    test_db_session: AsyncSession,
+    test_session: AsyncSession,
 ):
     existing_company = Company(
         name="Existing Restaurant",
@@ -141,8 +141,8 @@ async def test_create_company_endpoint_subdomain_taken(
         type_of_establishment=CompanyEstablishmentType.RESTAURANT,
         cuisine_category=CuisineCategory.JAPANESE,
     )
-    test_db_session.add(existing_company)
-    await test_db_session.commit()
+    test_session.add(existing_company)
+    await test_session.commit()
 
     company_data = {
         "name": "New Restaurant",

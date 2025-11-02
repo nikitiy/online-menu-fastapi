@@ -17,8 +17,8 @@ from src.backoffice.apps.company.services import CompanyService
 
 
 @pytest_asyncio.fixture
-async def company_service(test_db_session: AsyncSession) -> CompanyService:
-    return CompanyService(test_db_session)
+async def company_service(test_session: AsyncSession) -> CompanyService:
+    return CompanyService(test_session)
 
 
 @pytest_asyncio.fixture
@@ -94,11 +94,11 @@ async def test_create_company_creates_site(company_service: CompanyService):
 
 @pytest.mark.asyncio
 async def test_get_accessible_companies_for_user(
-    company_service: CompanyService, test_db_session: AsyncSession
+    company_service: CompanyService, test_session: AsyncSession
 ):
     user = User(email="user@example.com", password_hash="hashed_password")
-    test_db_session.add(user)
-    await test_db_session.flush()
+    test_session.add(user)
+    await test_session.flush()
 
     company1_data = CompanyCreate(
         name="Company 1",
@@ -134,8 +134,8 @@ async def test_get_accessible_companies_for_user(
     member2 = CompanyMember(
         company_id=company2.id, user_id=user.id, role=CompanyRole.ADMIN
     )
-    test_db_session.add_all([member1, member2])
-    await test_db_session.flush()
+    test_session.add_all([member1, member2])
+    await test_session.flush()
 
     companies = await company_service.get_accessible_companies_for_user(user.id)
 

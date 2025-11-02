@@ -11,7 +11,7 @@ from src.backoffice.models.all import Base
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_db_session() -> AsyncGenerator[AsyncSession, None]:
+async def test_session() -> AsyncGenerator[AsyncSession, None]:
     engine = create_async_engine(
         "sqlite+aiosqlite:///:memory:",
         connect_args={"check_same_thread": False},
