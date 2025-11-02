@@ -7,8 +7,7 @@ from src.backoffice.apps.company.exceptions import SubdomainAlreadyTaken
 from src.backoffice.core.config import cors_settings, logging_settings
 from src.backoffice.core.exceptions import subdomain_already_taken_handler
 from src.backoffice.core.logging import configure_logging
-from src.backoffice.core.middleware import (AuthMiddleware,
-                                            RequestContextMiddleware)
+from src.backoffice.core.middleware import AuthMiddleware, RequestContextMiddleware
 
 
 def create_app() -> FastAPI:
@@ -39,7 +38,7 @@ def create_app() -> FastAPI:
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "JWT token obtained via /api/v1/swagger-auth/login",
+                "description": "JWT token obtained via /api/v1/auth/login",
             },
         }
 
