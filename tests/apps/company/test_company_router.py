@@ -1,70 +1,21 @@
-import base64
-from typing import AsyncGenerator
-
 import httpx
 import pytest
-import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.backoffice.apps.account.models import User
-from src.backoffice.apps.account.utils import get_password_hash
 from src.backoffice.apps.company.models import Company, CompanyMember
 from src.backoffice.apps.company.models.types import (
     CompanyEstablishmentType,
     CompanyRole,
     CuisineCategory,
 )
-from src.backoffice.core.app import create_app
-from src.backoffice.core.dependencies.database import get_session
-
-
-@pytest_asyncio.fixture
-async def test_user(test_session: AsyncSession) -> User:
-    password = "test_password_123"
-    password_hash = get_password_hash(password)
-    user = User(
-        email="test@example.com",
-        password_hash=password_hash,
-        is_active=True,
-        is_verified=True,
-    )
-    test_session.add(user)
-    await test_session.commit()
-    await test_session.refresh(user)
-    return user
-
-
-@pytest_asyncio.fixture
-async def test_app(test_session: AsyncSession):
-    app = create_app()
-
-    async def override_get_session():
-        yield test_session
-
-    app.dependency_overrides[get_session] = override_get_session
-
-    yield app
-
-    app.dependency_overrides.clear()
-
-
-@pytest_asyncio.fixture
-async def client(test_app) -> AsyncGenerator[httpx.AsyncClient, None]:
-    transport = httpx.ASGITransport(app=test_app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
-
-
-def create_basic_auth_header(email: str, password: str) -> str:
-    credentials = f"{email}:{password}"
-    encoded = base64.b64encode(credentials.encode()).decode()
-    return f"Basic {encoded}"
+from tests.fixtures.factories import CompanyFactory
+from tests.utils.auth import create_basic_auth_header
 
 
 @pytest.mark.asyncio
 async def test_create_company_endpoint_success(
-    client: httpx.AsyncClient, test_user: User, test_session: AsyncSession
+    client: httpx.AsyncClient, test_user, test_session: AsyncSession
 ):
     company_data = {
         "name": "New Restaurant",
@@ -131,18 +82,17 @@ async def test_create_company_endpoint_unauthorized(client: httpx.AsyncClient):
 @pytest.mark.asyncio
 async def test_create_company_endpoint_subdomain_taken(
     client: httpx.AsyncClient,
-    test_user: User,
+    test_user,
     test_session: AsyncSession,
 ):
-    existing_company = Company(
+    await CompanyFactory.create(
+        session=test_session,
         name="Existing Restaurant",
         description="Existing",
         subdomain="existing-restaurant",
         type_of_establishment=CompanyEstablishmentType.RESTAURANT,
         cuisine_category=CuisineCategory.JAPANESE,
     )
-    test_session.add(existing_company)
-    await test_session.commit()
 
     company_data = {
         "name": "New Restaurant",
@@ -167,7 +117,7 @@ async def test_create_company_endpoint_subdomain_taken(
 
 @pytest.mark.asyncio
 async def test_create_company_endpoint_invalid_data(
-    client: httpx.AsyncClient, test_user: User
+    client: httpx.AsyncClient, test_user
 ):
     company_data = {
         "name": "",

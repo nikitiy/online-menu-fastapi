@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -32,14 +33,24 @@ class JWTService:
         self, data: dict, expires_delta: Optional[timedelta] = None
     ) -> str:
         to_encode = data.copy()
+        now = datetime.now(timezone.utc)
         if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
+            expire = now + expires_delta
         else:
-            expire = datetime.now(timezone.utc) + timedelta(
-                days=self.refresh_token_expire_days
-            )
+            expire = now + timedelta(days=self.refresh_token_expire_days)
 
-        to_encode.update({"exp": expire, "type": "refresh"})
+        # Add unique token identifier (jti) to prevent collisions
+        # Use timestamp with microseconds + random token for uniqueness
+        jti = f"{now.timestamp()}-{secrets.token_urlsafe(16)}"
+
+        to_encode.update(
+            {
+                "exp": expire,
+                "iat": now,  # Issued at time
+                "type": "refresh",
+                "jti": jti,  # JWT ID for uniqueness
+            }
+        )
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
         return encoded_jwt
 

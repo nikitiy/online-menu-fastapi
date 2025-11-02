@@ -1,42 +1,20 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
-import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.backoffice.apps.account.models import User
 from src.backoffice.apps.company.exceptions import SubdomainAlreadyTaken
-from src.backoffice.apps.company.models import Company, CompanyMember
 from src.backoffice.apps.company.models.types import (
     CompanyEstablishmentType,
     CompanyRole,
     CuisineCategory,
 )
 from src.backoffice.apps.company.schemas import CompanyCreate
-from src.backoffice.apps.company.services import CompanyService
-
-
-@pytest_asyncio.fixture
-async def company_service(test_session: AsyncSession) -> CompanyService:
-    return CompanyService(test_session)
-
-
-@pytest_asyncio.fixture
-async def sample_company(
-    company_service: CompanyService,
-) -> Company:
-    company_data = CompanyCreate(
-        name="Test Restaurant",
-        description="A test restaurant",
-        subdomain="test-restaurant",
-        type_of_establishment=CompanyEstablishmentType.RESTAURANT,
-        cuisine_category=CuisineCategory.JAPANESE,
-    )
-    return await company_service.create_company(company_data)
+from tests.fixtures.factories import CompanyMemberFactory, UserFactory
 
 
 @pytest.mark.asyncio
-async def test_create_company_success(company_service: CompanyService):
+async def test_create_company_success(company_service):
     company_data = CompanyCreate(
         name="New Restaurant",
         description="A new restaurant",
@@ -56,9 +34,7 @@ async def test_create_company_success(company_service: CompanyService):
 
 
 @pytest.mark.asyncio
-async def test_create_company_subdomain_taken(
-    company_service: CompanyService, sample_company: Company
-):
+async def test_create_company_subdomain_taken(company_service, sample_company):
     company_data = CompanyCreate(
         name="Another Restaurant",
         description="Another restaurant",
@@ -74,7 +50,7 @@ async def test_create_company_subdomain_taken(
 
 
 @pytest.mark.asyncio
-async def test_create_company_creates_site(company_service: CompanyService):
+async def test_create_company_creates_site(company_service):
     company_data = CompanyCreate(
         name="Restaurant with Site",
         description="A restaurant",
@@ -94,10 +70,14 @@ async def test_create_company_creates_site(company_service: CompanyService):
 
 @pytest.mark.asyncio
 async def test_get_accessible_companies_for_user(
-    company_service: CompanyService, test_session: AsyncSession
+    company_service, test_session: AsyncSession
 ):
-    user = User(email="user@example.com", password_hash="hashed_password")
-    test_session.add(user)
+    user = await UserFactory.create(
+        session=test_session,
+        email="user@example.com",
+        password="hashed_password",
+        commit=False,
+    )
     await test_session.flush()
 
     company1_data = CompanyCreate(
@@ -128,13 +108,20 @@ async def test_get_accessible_companies_for_user(
     )
     company3 = await company_service.create_company(company3_data)
 
-    member1 = CompanyMember(
-        company_id=company1.id, user_id=user.id, role=CompanyRole.OWNER
+    await CompanyMemberFactory.create(
+        session=test_session,
+        company_id=company1.id,
+        user_id=user.id,
+        role=CompanyRole.OWNER,
+        commit=False,
     )
-    member2 = CompanyMember(
-        company_id=company2.id, user_id=user.id, role=CompanyRole.ADMIN
+    await CompanyMemberFactory.create(
+        session=test_session,
+        company_id=company2.id,
+        user_id=user.id,
+        role=CompanyRole.ADMIN,
+        commit=False,
     )
-    test_session.add_all([member1, member2])
     await test_session.flush()
 
     companies = await company_service.get_accessible_companies_for_user(user.id)
@@ -147,9 +134,7 @@ async def test_get_accessible_companies_for_user(
 
 
 @pytest.mark.asyncio
-async def test_get_accessible_companies_for_user_empty(
-    company_service: CompanyService,
-):
+async def test_get_accessible_companies_for_user_empty(company_service):
     companies = await company_service.get_accessible_companies_for_user(99999)
 
     assert len(companies) == 0
