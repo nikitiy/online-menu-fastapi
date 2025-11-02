@@ -4,10 +4,7 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-from src.backoffice.apps.account.models import User
-from src.backoffice.apps.company.models import Company, CompanyBranch, CompanyMember
-from src.backoffice.apps.site.models import Site
-from src.backoffice.models.all import Base
+from src.backoffice.models.all import Company, CompanyBranch, CompanyMember, Site, User
 
 
 @pytest_asyncio.fixture(scope="function")
