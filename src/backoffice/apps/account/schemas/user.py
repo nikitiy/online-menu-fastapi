@@ -54,26 +54,6 @@ class UserUpdate(BaseModel):
     avatar_url: Optional[str] = Field(None, description="Avatar URL")
 
 
-class UserInDB(UserBase):
-    """User in the database schema"""
-
-    id: int
-    is_active: bool
-    is_verified: bool
-    is_superuser: bool
-    created_at: datetime
-    updated_at: datetime
-    last_login: Optional[datetime] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class User(UserInDB):
-    """Public user schema"""
-
-    pass
-
-
 class UserProfile(BaseModel):
     """User profile schema"""
 

@@ -1,20 +1,25 @@
-from .auth import (LoginRequest, OAuthCallback, OAuthProvider, OAuthProviders,
-                   RefreshTokenCreate, RefreshTokenRequest, RegisterRequest,
-                   Token, TokenData, UserLogin)
-from .user import (User, UserCreate, UserCreateInternal, UserInDB, UserProfile,
-                   UserUpdate)
+from .auth import (
+    LoginRequest,
+    OAuthCallback,
+    OAuthProvider,
+    OAuthProviders,
+    RefreshTokenCreate,
+    RefreshTokenRequest,
+    RegisterRequest,
+    Token,
+    UserLogin,
+)
+from .user import UserBase, UserCreate, UserCreateInternal, UserProfile, UserUpdate
 
 __all__ = (
     # User schemas
-    "User",
+    "UserBase",
     "UserCreate",
     "UserCreateInternal",
     "UserUpdate",
-    "UserInDB",
     "UserProfile",
     # Auth schemas
     "Token",
-    "TokenData",
     "RefreshTokenCreate",
     "LoginRequest",
     "RegisterRequest",

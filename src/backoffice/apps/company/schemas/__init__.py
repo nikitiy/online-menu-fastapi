@@ -1,32 +1,42 @@
-from .company import (CompanyCreate, CompanyInDB, CompanyOut, CompanyShortOut,
-                      CompanyUpdate)
-from .company_branch import (CompanyBranch, CompanyBranchCreate,
-                             CompanyBranchInDB, CompanyBranchUpdate)
-from .company_member import (CompanyMember, CompanyMemberBase,
-                             CompanyMemberCreate,
-                             CompanyMemberCreateWithCompany, CompanyMemberOut,
-                             CompanyMemberRole, CompanyMemberUpdate,
-                             CompanyMemberUpdateRole)
+from .company import (
+    CompanyBase,
+    CompanyCreate,
+    CompanyInDB,
+    CompanyResponse,
+    CompanyShortResponse,
+    CompanyUpdate,
+)
+from .company_branch import (
+    CompanyBranchBase,
+    CompanyBranchCreate,
+    CompanyBranchInDB,
+    CompanyBranchResponse,
+    CompanyBranchUpdate,
+)
+from .company_member import (
+    CompanyMemberCreate,
+    CompanyMemberInDB,
+    CompanyMemberResponse,
+    CompanyMemberUpdate,
+)
 
 __all__ = (
     # Company schemas
-    "CompanyShortOut",
-    "CompanyOut",
+    "CompanyBase",
     "CompanyCreate",
     "CompanyUpdate",
     "CompanyInDB",
+    "CompanyResponse",
+    "CompanyShortResponse",
     # CompanyBranch schemas
-    "CompanyBranch",
+    "CompanyBranchBase",
     "CompanyBranchCreate",
     "CompanyBranchUpdate",
     "CompanyBranchInDB",
+    "CompanyBranchResponse",
     # CompanyMember schemas
-    "CompanyMember",
-    "CompanyMemberBase",
     "CompanyMemberCreate",
-    "CompanyMemberCreateWithCompany",
     "CompanyMemberUpdate",
-    "CompanyMemberUpdateRole",
-    "CompanyMemberRole",
-    "CompanyMemberOut",
+    "CompanyMemberInDB",
+    "CompanyMemberResponse",
 )

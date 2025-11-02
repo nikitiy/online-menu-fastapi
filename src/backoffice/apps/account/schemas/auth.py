@@ -12,13 +12,6 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
-class TokenData(BaseModel):
-    """Token data schema"""
-
-    user_id: Optional[int] = None
-    email: Optional[str] = None
-
-
 class RefreshTokenCreate(BaseModel):
     """Refresh token creation schema"""
 

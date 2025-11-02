@@ -51,7 +51,7 @@ class CompanyBranchInDB(CompanyBranchBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CompanyBranch(CompanyBranchInDB):
-    """Public company branch schema"""
+class CompanyBranchResponse(CompanyBranchInDB):
+    """Company branch response schema"""
 
     pass

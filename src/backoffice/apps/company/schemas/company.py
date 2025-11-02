@@ -68,12 +68,12 @@ class CompanyInDB(CompanyBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CompanyOut(CompanyInDB):
-    """Public company schema"""
+class CompanyResponse(CompanyInDB):
+    """Company response schema"""
 
 
-class CompanyShortOut(BaseModel):
-    """Public short company schema"""
+class CompanyShortResponse(BaseModel):
+    """Company short response schema"""
 
     name: str
     description: Optional[str]

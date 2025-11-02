@@ -4,8 +4,8 @@ from fastapi import APIRouter, status
 
 from src.backoffice.apps.company.schemas import (
     CompanyCreate,
-    CompanyOut,
-    CompanyShortOut,
+    CompanyResponse,
+    CompanyShortResponse,
 )
 from src.backoffice.core.dependencies import AnyAuthUserDep, CompanyApplicationDep
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/companies", tags=["companies"])
 
 @router.post(
     "/",
-    response_model=CompanyOut,
+    response_model=CompanyResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create company",
 )
@@ -28,7 +28,7 @@ async def create_company(
 
 @router.get(
     "/",
-    response_model=List[CompanyShortOut],
+    response_model=List[CompanyShortResponse],
     summary="List companies accessible to user",
 )
 async def list_user_companies(
