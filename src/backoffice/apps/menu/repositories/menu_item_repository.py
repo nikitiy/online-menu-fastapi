@@ -2,8 +2,9 @@ from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from src.backoffice.apps.menu.models import MenuItem
+from src.backoffice.apps.menu.models import Category, MenuItem
 from src.backoffice.core.repositories import BaseRepository
 
 
@@ -16,6 +17,56 @@ class MenuItemRepository(BaseRepository[MenuItem]):
             select(MenuItem).where(MenuItem.slug == slug)
         )
         return result.scalar_one_or_none()
+
+    async def get_by_slug_with_relations(self, slug: str) -> Optional[MenuItem]:
+        """Load menu item with images and category with parent chain"""
+        result = await self.session.execute(
+            select(MenuItem)
+            .where(MenuItem.slug == slug)
+            .options(
+                selectinload(MenuItem.images),
+                selectinload(MenuItem.category).selectinload(Category.parent),
+            )
+        )
+        menu_item = result.scalar_one_or_none()
+        if menu_item and menu_item.category:
+            # Load full parent chain recursively
+            await self._load_category_parent_chain(menu_item.category)
+        return menu_item
+
+    async def get_by_id_with_relations(self, item_id: int) -> Optional[MenuItem]:
+        """Load menu item by ID with images and category with parent chain"""
+        result = await self.session.execute(
+            select(MenuItem)
+            .where(MenuItem.id == item_id)
+            .options(
+                selectinload(MenuItem.images),
+                selectinload(MenuItem.category).selectinload(Category.parent),
+            )
+        )
+        menu_item = result.scalar_one_or_none()
+        if menu_item and menu_item.category:
+            # Load full parent chain recursively
+            await self._load_category_parent_chain(menu_item.category)
+        return menu_item
+
+    async def _load_category_parent_chain(self, category: Category) -> None:
+        """Recursively load parent category chain"""
+        if category.parent_id is None:
+            return
+
+        # Load parent if not already loaded
+        if category.parent is None:
+            result = await self.session.execute(
+                select(Category)
+                .where(Category.id == category.parent_id)
+                .options(selectinload(Category.parent))
+            )
+            category.parent = result.scalar_one_or_none()
+
+        # Recursively load parent's parent chain
+        if category.parent:
+            await self._load_category_parent_chain(category.parent)
 
     async def update_by_slug(self, slug: str, **kwargs) -> Optional[MenuItem]:
         menu_item = await self.get_by_slug(slug)
@@ -67,7 +118,10 @@ class MenuItemRepository(BaseRepository[MenuItem]):
         self,
         category_id: Optional[int] = None,
     ) -> List[MenuItem]:
-        stmt = select(MenuItem)
+        stmt = select(MenuItem).options(
+            selectinload(MenuItem.images),
+            selectinload(MenuItem.category).selectinload(Category.parent),
+        )
 
         if category_id is not None:
             stmt = stmt.where(MenuItem.category_id == category_id)
@@ -75,4 +129,11 @@ class MenuItemRepository(BaseRepository[MenuItem]):
         stmt = stmt.order_by(MenuItem.created_at.desc())
 
         result = await self.session.execute(stmt)
-        return list(result.scalars().all())
+        menu_items = list(result.scalars().all())
+
+        # Load parent chains for all categories
+        for menu_item in menu_items:
+            if menu_item.category:
+                await self._load_category_parent_chain(menu_item.category)
+
+        return menu_items

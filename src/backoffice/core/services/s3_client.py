@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import ClientError, NoCredentialsError
 from fastapi import HTTPException, UploadFile
 from PIL import Image
@@ -13,6 +14,12 @@ from src.backoffice.core.config import s3_settings
 
 class S3Client:
     def __init__(self):
+        config = Config(
+            proxies={
+                "http": None,
+                "https": None,
+            }
+        )
         self.s3_client = boto3.client(
             "s3",
             endpoint_url=s3_settings.endpoint_url,
@@ -20,6 +27,7 @@ class S3Client:
             aws_secret_access_key=s3_settings.secret_key,
             region_name=s3_settings.region,
             use_ssl=s3_settings.use_https,
+            config=config,
         )
         self.bucket_name = s3_settings.bucket_name
 
@@ -59,10 +67,10 @@ class S3Client:
                 result["thumbnails"] = thumbnails
 
                 try:
-                    with Image.open(file.file) as img:
+                    with Image.open(io.BytesIO(file_content)) as img:
                         result["width"] = img.width
                         result["height"] = img.height
-                except (OSError, IOError, ValueError):
+                except (OSError, ValueError):
                     pass
 
             return result
@@ -114,7 +122,11 @@ class S3Client:
             )
 
         file_extension = self._get_file_extension(file.filename).lower()
-        if file_extension not in s3_settings.allowed_extensions:
+        file_extension_without_dot = file_extension.lstrip(".")
+        allowed_extensions_normalized = [
+            ext.lstrip(".").lower() for ext in s3_settings.allowed_extensions
+        ]
+        if file_extension_without_dot not in allowed_extensions_normalized:
             raise HTTPException(
                 status_code=400,
                 detail=f"Invalid file extension. Allowed: {', '.join(s3_settings.allowed_extensions)}",

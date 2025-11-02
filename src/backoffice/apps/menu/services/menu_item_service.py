@@ -27,6 +27,14 @@ class MenuItemService:
     async def get_by_slug(self, slug: str) -> Optional[MenuItem]:
         return await self.repository.get_by_slug(slug)
 
+    async def get_by_slug_with_relations(self, slug: str) -> Optional[MenuItem]:
+        """Get menu item by slug with all relations loaded"""
+        return await self.repository.get_by_slug_with_relations(slug)
+
+    async def get_by_id_with_relations(self, item_id: int) -> Optional[MenuItem]:
+        """Get menu item by ID with all relations loaded"""
+        return await self.repository.get_by_id_with_relations(item_id)
+
     async def list(
         self,
         category_id: Optional[int] = None,

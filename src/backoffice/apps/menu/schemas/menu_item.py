@@ -15,7 +15,6 @@ class MenuItemBase(BaseModel):
     proteins: Optional[int] = Field(None, ge=0, description="Proteins")
     fats: Optional[int] = Field(None, ge=0, description="Fats")
     carbohydrated: Optional[int] = Field(None, ge=0, description="Carbohydrated")
-    is_template: bool = Field(False, description="Is template")
     owner_company_id: Optional[int] = Field(
         None, description="Owner company ID (for non-template positions)"
     )
@@ -32,10 +31,6 @@ class MenuImageCreateData(BaseModel):
 class MenuItemCreate(MenuItemBase):
     """Menu item schema"""
 
-    images_metadata: Optional[List[MenuImageCreateData]] = Field(
-        None, description="Metadata for images (uploaded separately)"
-    )
-
 
 class MenuItemUpdate(BaseModel):
     """Update menu item schema"""
@@ -48,7 +43,6 @@ class MenuItemUpdate(BaseModel):
     proteins: Optional[int] = Field(None, ge=0)
     fats: Optional[int] = Field(None, ge=0)
     carbohydrated: Optional[int] = Field(None, ge=0)
-    is_template: Optional[bool] = None
 
 
 class MenuImageResponse(BaseModel):
