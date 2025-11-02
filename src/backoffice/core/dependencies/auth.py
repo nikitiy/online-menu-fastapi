@@ -9,11 +9,11 @@ from src.backoffice.apps.account.utils import verify_password
 from src.backoffice.core.dependencies.database import SessionDep
 
 
-async def get_request_user_any_auth(
+async def get_authenticated_user(
     request: Request,
     session: SessionDep,
 ) -> UserProfile:
-    """Get request user from either Basic Auth or Bearer token"""
+    """Get authenticated user from either Basic Auth or Bearer token"""
     user_id = getattr(request.state, "user_id", None)
     if user_id:
         user_service = UserService(session)
@@ -69,4 +69,6 @@ async def get_request_user_any_auth(
     )
 
 
-AnyAuthUserDep: TypeAlias = Annotated[UserProfile, Depends(get_request_user_any_auth)]
+AuthenticatedUserDep: TypeAlias = Annotated[
+    UserProfile, Depends(get_authenticated_user)
+]

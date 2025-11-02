@@ -7,7 +7,7 @@ from src.backoffice.apps.company.schemas import (
     CompanyResponse,
     CompanyShortResponse,
 )
-from src.backoffice.core.dependencies import AnyAuthUserDep, CompanyApplicationDep
+from src.backoffice.core.dependencies import AuthenticatedUserDep, CompanyApplicationDep
 
 router = APIRouter(prefix="/companies", tags=["companies"])
 
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/companies", tags=["companies"])
 )
 async def create_company(
     company_data: CompanyCreate,
-    request_user: AnyAuthUserDep,
+    request_user: AuthenticatedUserDep,
     application: CompanyApplicationDep,
 ):
     return await application.create_company_with_owner(company_data, request_user.id)
@@ -32,6 +32,6 @@ async def create_company(
     summary="List companies accessible to user",
 )
 async def list_user_companies(
-    request_user: AnyAuthUserDep, application: CompanyApplicationDep
+    request_user: AuthenticatedUserDep, application: CompanyApplicationDep
 ):
     return await application.get_accessible_companies_for_user(request_user.id)
