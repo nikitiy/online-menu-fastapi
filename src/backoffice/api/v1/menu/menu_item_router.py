@@ -23,9 +23,9 @@ async def create_menu_item(
 @router.get("/", response_model=list[MenuItemResponse])
 async def list_menu_items(
     application: MenuApplicationDep,
-    category_id: Optional[int] = None,
+    category_slug: Optional[str] = None,
 ):
-    return await application.list_menu_items(category_id=category_id)
+    return await application.list_menu_items(category_slug=category_slug)
 
 
 @router.get("/{slug}", response_model=MenuItemResponse)

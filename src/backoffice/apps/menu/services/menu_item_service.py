@@ -61,10 +61,10 @@ class MenuItemService:
 
     async def list(
         self,
-        category_id: Optional[int] = None,
+        category_slug: Optional[str] = None,
     ) -> List[MenuItem]:
         return await self.repository.list_with_optional_category(
-            category_id=category_id,
+            category_slug=category_slug,
         )
 
     async def update_by_slug(

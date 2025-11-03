@@ -116,15 +116,17 @@ class MenuItemRepository(BaseRepository[MenuItem]):
 
     async def list_with_optional_category(
         self,
-        category_id: Optional[int] = None,
+        category_slug: Optional[str] = None,
     ) -> List[MenuItem]:
         stmt = select(MenuItem).options(
             selectinload(MenuItem.images),
             selectinload(MenuItem.category).selectinload(Category.parent),
         )
 
-        if category_id is not None:
-            stmt = stmt.where(MenuItem.category_id == category_id)
+        if category_slug is not None:
+            stmt = stmt.join(Category, MenuItem.category_id == Category.id).where(
+                Category.slug == category_slug
+            )
 
         stmt = stmt.order_by(MenuItem.created_at.desc())
 

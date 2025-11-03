@@ -22,9 +22,9 @@ class MenuApplication:
         return menu_item
 
     async def list_menu_items(
-        self, category_id: Optional[int] = None
+        self, category_slug: Optional[str] = None
     ) -> List[MenuItem]:
-        menu_items = await self.menu_item_service.list(category_id=category_id)
+        menu_items = await self.menu_item_service.list(category_slug=category_slug)
         # Add URLs to images for all menu items
         for menu_item in menu_items:
             await self._add_urls_to_images(menu_item)
