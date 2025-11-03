@@ -5,6 +5,9 @@ from fastapi import Depends
 from src.backoffice.apps.account.application import AccountApplication
 from src.backoffice.apps.company.application import CompanyApplication
 from src.backoffice.apps.location.application import LocationApplication
+from src.backoffice.apps.location.schemas.location_search_query import (
+    LocationSearchQuery,
+)
 from src.backoffice.apps.menu.application import MenuApplication
 from src.backoffice.core.dependencies.database import SessionDep
 
@@ -47,4 +50,11 @@ LocationApplicationDep: TypeAlias = Annotated[
 # Menu Application
 MenuApplicationDep: TypeAlias = Annotated[
     MenuApplication, Depends(get_menu_application)
+]
+
+# ==================== QUERY PARAMETER DEPENDENCIES ====================
+
+# Location Search Query
+LocationSearchQueryDep: TypeAlias = Annotated[
+    LocationSearchQuery, Depends(LocationSearchQuery)
 ]

@@ -2,11 +2,11 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.backoffice.apps.company.exceptions import SubdomainAlreadyTaken
 from src.backoffice.apps.company.models import Company
 from src.backoffice.apps.company.repositories import CompanyRepository
 from src.backoffice.apps.company.schemas import CompanyCreate
 from src.backoffice.apps.site.services import SiteService
+from src.backoffice.core.exceptions import SubdomainAlreadyTaken
 
 
 class CompanyService:

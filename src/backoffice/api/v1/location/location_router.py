@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
 from src.backoffice.apps.location.schemas import (
     AddressCreate,
@@ -15,7 +15,10 @@ from src.backoffice.apps.location.schemas import (
     StreetCreate,
     StreetResponse,
 )
-from src.backoffice.core.dependencies import LocationApplicationDep
+from src.backoffice.core.dependencies import (
+    LocationApplicationDep,
+    LocationSearchQueryDep,
+)
 
 router = APIRouter(prefix="/locations", tags=["locations"])
 
@@ -202,12 +205,8 @@ async def get_addresses_by_street(
 
 @router.get("/search")
 async def search_locations(
+    params: LocationSearchQueryDep,
     location_app: LocationApplicationDep,
-    query: str = Query(..., description="Search query"),
-    country_id: Optional[int] = Query(None, description="Country ID to limit search"),
-    region_id: Optional[int] = Query(None, description="Region ID to limit search"),
-    city_id: Optional[int] = Query(None, description="City ID to limit search"),
-    limit: int = Query(10, ge=1, le=50, description="Maximum number of results"),
 ):
     """
     Search locations by request
@@ -215,9 +214,9 @@ async def search_locations(
     Search by country, region, city, street, and address
     """
     return await location_app.search_locations(
-        query=query,
-        country_id=country_id,
-        region_id=region_id,
-        city_id=city_id,
-        limit=limit,
+        query=params.query,
+        country_id=params.country_id,
+        region_id=params.region_id,
+        city_id=params.city_id,
+        limit=params.limit,
     )

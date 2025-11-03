@@ -3,13 +3,13 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.backoffice.apps.company.exceptions import SubdomainAlreadyTaken
 from src.backoffice.apps.company.models.types import (
     CompanyEstablishmentType,
     CompanyRole,
     CuisineCategory,
 )
 from src.backoffice.apps.company.schemas import CompanyCreate
+from src.backoffice.core.exceptions import SubdomainAlreadyTaken
 from tests.fixtures.factories import CompanyMemberFactory, UserFactory
 
 

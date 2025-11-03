@@ -4,6 +4,7 @@ from .service_dependencies import (
     AccountApplicationDep,
     CompanyApplicationDep,
     LocationApplicationDep,
+    LocationSearchQueryDep,
     MenuApplicationDep,
 )
 
@@ -18,4 +19,6 @@ __all__ = [
     "CompanyApplicationDep",
     "LocationApplicationDep",
     "MenuApplicationDep",
+    # Query parameters
+    "LocationSearchQueryDep",
 ]

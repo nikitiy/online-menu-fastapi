@@ -3,9 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
 from src.backoffice.api.v1 import api_router
-from src.backoffice.apps.company.exceptions import SubdomainAlreadyTaken
 from src.backoffice.core.config import cors_settings, logging_settings
-from src.backoffice.core.exceptions import subdomain_already_taken_handler
+from src.backoffice.core.exceptions import NotFoundError, SubdomainAlreadyTaken
+from src.backoffice.core.handlers import (
+    not_found_handler,
+    subdomain_already_taken_handler,
+)
 from src.backoffice.core.logging import configure_logging
 from src.backoffice.core.middleware import AuthMiddleware, RequestContextMiddleware
 
@@ -63,7 +66,8 @@ def create_app() -> FastAPI:
         )
 
     # Exception handlers
-    app.add_exception_handler(SubdomainAlreadyTaken, subdomain_already_taken_handler)
+    app.add_exception_handler(SubdomainAlreadyTaken, subdomain_already_taken_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(NotFoundError, not_found_handler)  # type: ignore[arg-type]
 
     # Routers
     app.include_router(api_router, prefix="/api/v1")

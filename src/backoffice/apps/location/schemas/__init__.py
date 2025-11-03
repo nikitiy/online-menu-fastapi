@@ -1,18 +1,45 @@
-from .address import (AddressBase, AddressCreate, AddressListResponse,
-                      AddressResponse, AddressUpdate)
-from .city import (CityBase, CityCreate, CityListResponse, CityResponse,
-                   CityUpdate)
-from .country import (CountryBase, CountryCreate, CountryListResponse,
-                      CountryResponse, CountryUpdate)
-from .geocoding import (GeocodingAccuracy, GeocodingListResponse,
-                        GeocodingProvider, GeocodingRequest,
-                        GeocodingResultBase, GeocodingResultCreate,
-                        GeocodingResultResponse, GeocodingSearchRequest,
-                        GeocodingSearchResponse, ReverseGeocodingRequest)
-from .region import (RegionBase, RegionCreate, RegionListResponse,
-                     RegionResponse, RegionUpdate)
-from .street import (StreetBase, StreetCreate, StreetListResponse,
-                     StreetResponse, StreetUpdate)
+from .address import (
+    AddressBase,
+    AddressCreate,
+    AddressListResponse,
+    AddressResponse,
+    AddressUpdate,
+)
+from .city import CityBase, CityCreate, CityListResponse, CityResponse, CityUpdate
+from .country import (
+    CountryBase,
+    CountryCreate,
+    CountryListResponse,
+    CountryResponse,
+    CountryUpdate,
+)
+from .geocoding import (
+    GeocodingAccuracy,
+    GeocodingListResponse,
+    GeocodingProvider,
+    GeocodingRequest,
+    GeocodingResultBase,
+    GeocodingResultCreate,
+    GeocodingResultResponse,
+    GeocodingSearchRequest,
+    GeocodingSearchResponse,
+    ReverseGeocodingRequest,
+)
+from .location_search_query import LocationSearchQuery
+from .region import (
+    RegionBase,
+    RegionCreate,
+    RegionListResponse,
+    RegionResponse,
+    RegionUpdate,
+)
+from .street import (
+    StreetBase,
+    StreetCreate,
+    StreetListResponse,
+    StreetResponse,
+    StreetUpdate,
+)
 
 __all__ = [
     # Country schemas
@@ -56,4 +83,6 @@ __all__ = [
     "GeocodingListResponse",
     "GeocodingAccuracy",
     "GeocodingProvider",
+    # Location search query
+    "LocationSearchQuery",
 ]

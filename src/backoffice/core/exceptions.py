@@ -1,9 +1,10 @@
-from fastapi import Request, status
-from fastapi.responses import JSONResponse
+class NotFoundError(Exception):
+    """Raised when an entity is not found"""
+
+    pass
 
 
-async def subdomain_already_taken_handler(_request: Request, exc) -> JSONResponse:
-    """Handle SubdomainAlreadyTaken exception"""
-    return JSONResponse(
-        status_code=status.HTTP_409_CONFLICT, content={"detail": str(exc)}
-    )
+class SubdomainAlreadyTaken(Exception):
+    """Raised when trying to use a subdomain that is already taken"""
+
+    pass

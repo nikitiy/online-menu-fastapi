@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, File, Form, Query, UploadFile, status
+from fastapi import APIRouter, File, Form, UploadFile, status
 
 from src.backoffice.apps.menu.schemas.menu_item import (
     MenuItemCreate,
@@ -23,7 +23,7 @@ async def create_menu_item(
 @router.get("/", response_model=list[MenuItemResponse])
 async def list_menu_items(
     application: MenuApplicationDep,
-    category_id: Optional[int] = Query(None, description="Filter by category ID"),
+    category_id: Optional[int] = None,
 ):
     return await application.list_menu_items(category_id=category_id)
 
