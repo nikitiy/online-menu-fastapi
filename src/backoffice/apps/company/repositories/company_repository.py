@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,6 +16,11 @@ class CompanyRepository(BaseRepository[Company]):
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
+
+    async def get_by_subdomain(self, subdomain: str) -> Optional[Company]:
+        stmt = select(Company).where(Company.subdomain == subdomain)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def select_user_companies(
         self,
