@@ -12,10 +12,23 @@ class CompanyMemberCreate(BaseModel):
     role: CompanyRole = Field(..., description="Role")
 
 
+class CompanyMemberCreateByEmail(BaseModel):
+    """Create company member by email schema"""
+
+    user_email: str = Field(..., description="User email")
+
+
 class CompanyMemberUpdate(BaseModel):
     """Update company member schema"""
 
     role: CompanyRole = Field(..., description="Role")
+
+
+class CompanyMemberUpdateByEmail(BaseModel):
+    """Update company member role by email schema"""
+
+    user_email: str = Field(..., description="User email")
+    role: CompanyRole = Field(..., description="New role")
 
 
 class CompanyMemberInDB(BaseModel):
@@ -35,3 +48,12 @@ class CompanyMemberResponse(CompanyMemberInDB):
     """Company member response schema"""
 
     pass
+
+
+class CompanyMemberCreateByEmailResponse(BaseModel):
+    """Response schema for creating company member by email"""
+
+    message: str = Field(..., description="Success message")
+    company_member: CompanyMemberResponse = Field(
+        ..., description="Created company member"
+    )

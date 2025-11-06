@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.backoffice.apps.company.access_control import CompanyAccessControl
 from src.backoffice.apps.company.models import Company, CompanyBranch
 from src.backoffice.apps.company.models.types import CompanyRole
 from src.backoffice.apps.company.schemas import (
@@ -9,12 +10,17 @@ from src.backoffice.apps.company.schemas import (
     CompanyBranchUpdate,
     CompanyCreate,
     CompanyMemberCreate,
+    CompanyMemberCreateByEmail,
+    CompanyMemberCreateByEmailResponse,
+    CompanyMemberResponse,
+    CompanyMemberUpdateByEmail,
 )
 from src.backoffice.apps.company.services import (
     CompanyBranchService,
     CompanyMemberService,
     CompanyService,
 )
+from src.backoffice.core.exceptions import NotFoundError
 
 
 class CompanyApplication:
@@ -23,6 +29,7 @@ class CompanyApplication:
         self.company_service = CompanyService(session)
         self.company_member_service = CompanyMemberService(session)
         self.company_branch_service = CompanyBranchService(session)
+        self.access_control = CompanyAccessControl(session)
 
     async def create_company_with_owner(
         self, company_data: CompanyCreate, owner_user_id: int
@@ -65,3 +72,70 @@ class CompanyApplication:
     async def delete_branch(self, branch_id: int) -> None:
         await self.company_branch_service.delete_branch_or_raise(branch_id)
         await self.session.commit()
+
+    # Company Member methods
+    async def add_member_by_email(
+        self,
+        company_subdomain: str,
+        member_data: CompanyMemberCreateByEmail,
+        user_id: int,
+    ) -> CompanyMemberCreateByEmailResponse:
+        company = await self.company_service.get_by_subdomain_or_raise(
+            company_subdomain
+        )
+        await self.access_control.check_can_add_member(company.id, user_id)
+        member = await self.company_member_service.add_member_by_email(
+            company.id, member_data
+        )
+        await self.session.commit()
+        return CompanyMemberCreateByEmailResponse(
+            message=f"User {member_data.user_email} has been added to the company with role VIEWER",
+            company_member=CompanyMemberResponse.model_validate(member),
+        )
+
+    async def remove_member_by_email(
+        self,
+        company_subdomain: str,
+        user_email: str,
+        user_id: int,
+    ) -> None:
+        company = await self.company_service.get_by_subdomain_or_raise(
+            company_subdomain
+        )
+        user = await self.company_member_service.user_service.get_by_email(user_email)
+        if not user:
+            raise NotFoundError(f"User with email {user_email} not found")
+        target_member = await self.company_member_service._get_member_or_raise(
+            company.id, user.id
+        )
+        await self.access_control.check_can_remove_member(
+            company.id, user_id, target_member.user_id
+        )
+        await self.company_member_service.remove_member_by_email(company.id, user_email)
+        await self.session.commit()
+
+    async def update_member_role_by_email(
+        self,
+        company_subdomain: str,
+        member_data: CompanyMemberUpdateByEmail,
+        user_id: int,
+    ) -> CompanyMemberResponse:
+        company = await self.company_service.get_by_subdomain_or_raise(
+            company_subdomain
+        )
+        user = await self.company_member_service.user_service.get_by_email(
+            member_data.user_email
+        )
+        if not user:
+            raise NotFoundError(f"User with email {member_data.user_email} not found")
+        target_member = await self.company_member_service._get_member_or_raise(
+            company.id, user.id
+        )
+        await self.access_control.check_can_change_role(
+            company.id, user_id, target_member.user_id, member_data.role
+        )
+        member = await self.company_member_service.update_member_role_by_email(
+            company.id, member_data
+        )
+        await self.session.commit()
+        return CompanyMemberResponse.model_validate(member)

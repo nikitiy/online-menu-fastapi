@@ -4,8 +4,11 @@ from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backoffice.apps.menu.models import MenuImage
-from src.backoffice.apps.menu.repositories import (MenuImageRepository,
-                                                   MenuItemRepository)
+from src.backoffice.apps.menu.repositories import (
+    MenuImageRepository,
+    MenuItemRepository,
+)
+from src.backoffice.core.exceptions import NotFoundError
 from src.backoffice.core.services.s3_client import s3_client
 
 
@@ -25,7 +28,7 @@ class MenuImageService:
     ) -> MenuImage:
         menu_item = await self.menu_item_repository.get_by_id(menu_item_id)
         if not menu_item:
-            raise ValueError("Menu item not found")
+            raise NotFoundError(f"Menu item with id {menu_item_id} not found")
 
         upload_result = await s3_client.upload_file(file, folder="menu-images")
 
@@ -70,7 +73,7 @@ class MenuImageService:
     ) -> MenuImage:
         image = await self.repository.get_by_id(image_id)
         if not image:
-            raise ValueError("Image not found")
+            raise NotFoundError(f"Image with id {image_id} not found")
 
         if is_primary and not image.is_primary:
             await self.repository.unset_primary_images(image.menu_item_id)
@@ -111,7 +114,7 @@ class MenuImageService:
     async def set_primary_image(self, image_id: int) -> MenuImage:
         image = await self.repository.get_by_id(image_id)
         if not image:
-            raise ValueError("Image not found")
+            raise NotFoundError(f"Image with id {image_id} not found")
 
         await self.repository.unset_primary_images(image.menu_item_id)
 
@@ -124,7 +127,7 @@ class MenuImageService:
     async def get_presigned_url(self, image_id: int, expiry_hours: int = 1) -> str:
         image = await self.repository.get_by_id(image_id)
         if not image:
-            raise ValueError("Image not found")
+            raise NotFoundError(f"Image with id {image_id} not found")
 
         return await s3_client.get_presigned_url(image.file_path, expiry_hours)
 

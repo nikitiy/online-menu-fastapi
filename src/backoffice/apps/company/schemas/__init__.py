@@ -15,9 +15,12 @@ from .company_branch import (
 )
 from .company_member import (
     CompanyMemberCreate,
+    CompanyMemberCreateByEmail,
+    CompanyMemberCreateByEmailResponse,
     CompanyMemberInDB,
     CompanyMemberResponse,
     CompanyMemberUpdate,
+    CompanyMemberUpdateByEmail,
 )
 
 __all__ = (
@@ -36,7 +39,10 @@ __all__ = (
     "CompanyBranchResponse",
     # CompanyMember schemas
     "CompanyMemberCreate",
+    "CompanyMemberCreateByEmail",
+    "CompanyMemberCreateByEmailResponse",
     "CompanyMemberUpdate",
+    "CompanyMemberUpdateByEmail",
     "CompanyMemberInDB",
     "CompanyMemberResponse",
 )
