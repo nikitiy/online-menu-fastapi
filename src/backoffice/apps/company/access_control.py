@@ -176,9 +176,8 @@ class CompanyAccessControl:
                 )
             return
 
-    def _has_permission(
-        self, role: CompanyRole, permission: MenuItemPermission
-    ) -> bool:
+    @staticmethod
+    def _has_permission(role: CompanyRole, permission: MenuItemPermission) -> bool:
         permission_checkers = {
             MenuItemPermission.READ: can_read,
             MenuItemPermission.CREATE: can_create,

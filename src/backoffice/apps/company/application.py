@@ -2,6 +2,7 @@ from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.backoffice.apps.account.services import UserService
 from src.backoffice.apps.company.access_control import CompanyAccessControl
 from src.backoffice.apps.company.models import Company, CompanyBranch
 from src.backoffice.apps.company.models.types import CompanyRole
@@ -20,7 +21,6 @@ from src.backoffice.apps.company.services import (
     CompanyMemberService,
     CompanyService,
 )
-from src.backoffice.core.exceptions import NotFoundError
 
 
 class CompanyApplication:
@@ -29,6 +29,7 @@ class CompanyApplication:
         self.company_service = CompanyService(session)
         self.company_member_service = CompanyMemberService(session)
         self.company_branch_service = CompanyBranchService(session)
+        self.user_service = UserService(session)
         self.access_control = CompanyAccessControl(session)
 
     async def create_company_with_owner(
@@ -102,11 +103,8 @@ class CompanyApplication:
         company = await self.company_service.get_by_subdomain_or_raise(
             company_subdomain
         )
-        user = await self.company_member_service.user_service.get_by_email(user_email)
-        if not user:
-            raise NotFoundError(f"User with email {user_email} not found")
-        target_member = await self.company_member_service._get_member_or_raise(
-            company.id, user.id
+        target_member = await self.company_member_service.get_member_by_email_or_raise(
+            company.id, user_email
         )
         await self.access_control.check_can_remove_member(
             company.id, user_id, target_member.user_id
@@ -123,13 +121,8 @@ class CompanyApplication:
         company = await self.company_service.get_by_subdomain_or_raise(
             company_subdomain
         )
-        user = await self.company_member_service.user_service.get_by_email(
-            member_data.user_email
-        )
-        if not user:
-            raise NotFoundError(f"User with email {member_data.user_email} not found")
-        target_member = await self.company_member_service._get_member_or_raise(
-            company.id, user.id
+        target_member = await self.company_member_service.get_member_by_email_or_raise(
+            company.id, member_data.user_email
         )
         await self.access_control.check_can_change_role(
             company.id, user_id, target_member.user_id, member_data.role

@@ -18,11 +18,13 @@ class MenuItemRepository(BaseRepository[MenuItem]):
         )
         return result.scalar_one_or_none()
 
-    async def get_by_slug_with_relations(self, slug: str) -> Optional[MenuItem]:
+    async def _get_menu_item_with_relations(
+        self, where_condition
+    ) -> Optional[MenuItem]:
         """Load menu item with images and category with parent chain"""
         result = await self.session.execute(
             select(MenuItem)
-            .where(MenuItem.slug == slug)
+            .where(where_condition)
             .options(
                 selectinload(MenuItem.images),
                 selectinload(MenuItem.category).selectinload(Category.parent),
@@ -31,27 +33,16 @@ class MenuItemRepository(BaseRepository[MenuItem]):
         menu_item = result.scalar_one_or_none()
         if menu_item and menu_item.category:
             # Load full parent chain recursively
-            await self._load_category_parent_chain(menu_item.category)
+            await self._load_category_parent_chain(menu_item.category)  # type: ignore
         return menu_item
 
-    async def get_by_id_with_relations(self, item_id: int) -> Optional[MenuItem]:
-        """Load menu item by ID with images and category with parent chain"""
-        result = await self.session.execute(
-            select(MenuItem)
-            .where(MenuItem.id == item_id)
-            .options(
-                selectinload(MenuItem.images),
-                selectinload(MenuItem.category).selectinload(Category.parent),
-            )
-        )
-        menu_item = result.scalar_one_or_none()
-        if menu_item and menu_item.category:
-            # Load full parent chain recursively
-            await self._load_category_parent_chain(menu_item.category)
-        return menu_item
+    async def get_by_slug_with_relations(self, slug: str) -> Optional[MenuItem]:
+        return await self._get_menu_item_with_relations(MenuItem.slug == slug)
+
+    async def get_by_id_with_menu_relations(self, item_id: int) -> Optional[MenuItem]:
+        return await self._get_menu_item_with_relations(MenuItem.id == item_id)
 
     async def _load_category_parent_chain(self, category: Category) -> None:
-        """Recursively load parent category chain"""
         if category.parent_id is None:
             return
 

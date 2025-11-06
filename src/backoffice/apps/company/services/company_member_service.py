@@ -65,6 +65,14 @@ class CompanyMemberService:
             raise NotFoundError("User is not a member of this company")
         return member
 
+    async def get_member_by_email_or_raise(
+        self, company_id: int, user_email: str
+    ) -> CompanyMember:
+        user = await self.user_service.get_by_email(user_email)
+        if not user:
+            raise NotFoundError(f"User with email {user_email} not found")
+        return await self._get_member_or_raise(company_id, user.id)
+
     async def add_member_by_email(
         self, company_id: int, member_data: CompanyMemberCreateByEmail
     ) -> CompanyMember:

@@ -61,7 +61,7 @@ class MenuItemService:
         return menu_item
 
     async def get_by_id_with_relations_or_raise(self, item_id: int) -> MenuItem:
-        menu_item = await self.repository.get_by_id_with_relations(item_id)
+        menu_item = await self.repository.get_by_id_with_menu_relations(item_id)
         if not menu_item:
             raise NotFoundError(f"Menu item with id '{item_id}' not found")
         return menu_item
