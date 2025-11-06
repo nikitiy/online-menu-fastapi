@@ -24,7 +24,7 @@ async def create_company_branch(
     application: CompanyApplicationDep,
 ):
     """Create a new company branch"""
-    return await application.create_branch(branch_data)
+    return await application.create_branch(branch_data, request_user.id)
 
 
 @router.get(
@@ -38,7 +38,7 @@ async def get_company_branch(
     application: CompanyApplicationDep,
 ):
     """Get company branch by ID"""
-    return await application.get_branch_by_id(branch_id)
+    return await application.get_branch_by_id(branch_id, request_user.id)
 
 
 @router.get(
@@ -52,7 +52,7 @@ async def list_company_branches(
     application: CompanyApplicationDep,
 ):
     """Get all branches for a company"""
-    return await application.get_branches_by_company(company_id=company_id)
+    return await application.get_branches_by_company(company_id, request_user.id)
 
 
 @router.put(
@@ -67,7 +67,7 @@ async def update_company_branch(
     application: CompanyApplicationDep,
 ):
     """Update company branch"""
-    return await application.update_branch(branch_id, branch_data)
+    return await application.update_branch(branch_id, branch_data, request_user.id)
 
 
 @router.delete(
@@ -81,4 +81,4 @@ async def delete_company_branch(
     application: CompanyApplicationDep,
 ):
     """Delete company branch"""
-    await application.delete_branch(branch_id)
+    await application.delete_branch(branch_id, request_user.id)

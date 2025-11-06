@@ -50,27 +50,47 @@ class CompanyApplication:
         return await self.company_service.get_accessible_companies_for_user(user_id)
 
     # Company Branch methods
-    async def create_branch(self, branch_data: CompanyBranchCreate) -> CompanyBranch:
+    async def create_branch(
+        self, branch_data: CompanyBranchCreate, user_id: int
+    ) -> CompanyBranch:
+        await self.access_control.check_company_branch_create_access(
+            branch_data.company_id, user_id
+        )
         branch = await self.company_branch_service.create_branch(branch_data)
         await self.session.commit()
         return branch
 
-    async def get_branch_by_id(self, branch_id: int) -> CompanyBranch:
-        return await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
+    async def get_branch_by_id(self, branch_id: int, user_id: int) -> CompanyBranch:
+        branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
+        await self.access_control.check_company_branch_read_access(
+            branch.company_id, user_id
+        )
+        return branch
 
-    async def get_branches_by_company(self, company_id: int) -> List[CompanyBranch]:
+    async def get_branches_by_company(
+        self, company_id: int, user_id: int
+    ) -> List[CompanyBranch]:
+        await self.access_control.check_company_branch_read_access(company_id, user_id)
         return await self.company_branch_service.get_branches_by_company(company_id)
 
     async def update_branch(
-        self, branch_id: int, branch_data: CompanyBranchUpdate
+        self, branch_id: int, branch_data: CompanyBranchUpdate, user_id: int
     ) -> CompanyBranch:
-        branch = await self.company_branch_service.update_branch_or_raise(
+        branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
+        await self.access_control.check_company_branch_update_access(
+            branch.company_id, user_id
+        )
+        updated_branch = await self.company_branch_service.update_branch_or_raise(
             branch_id, branch_data
         )
         await self.session.commit()
-        return branch
+        return updated_branch
 
-    async def delete_branch(self, branch_id: int) -> None:
+    async def delete_branch(self, branch_id: int, user_id: int) -> None:
+        branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
+        await self.access_control.check_company_branch_delete_access(
+            branch.company_id, user_id
+        )
         await self.company_branch_service.delete_branch_or_raise(branch_id)
         await self.session.commit()
 
