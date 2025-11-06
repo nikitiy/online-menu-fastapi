@@ -24,7 +24,7 @@ class MenuApplication:
         menu_item = await self.menu_item_service.get_by_slug_with_relations_or_raise(
             slug
         )
-        await self.access_control.check_read_access(menu_item, user_id)
+        await self.access_control.check_menu_item_read_access(menu_item, user_id)
         await self._add_urls_to_images(menu_item)
         return menu_item
 
@@ -67,7 +67,7 @@ class MenuApplication:
         self, menu_item_slug: str, update_data: MenuItemUpdate, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_update_access(menu_item, user_id)
+        await self.access_control.check_menu_item_update_access(menu_item, user_id)
 
         await self.menu_item_service.update_by_slug_or_raise(
             menu_item_slug, update_data
@@ -81,7 +81,7 @@ class MenuApplication:
 
     async def delete_menu_item(self, menu_item_slug: str, user_id: int) -> None:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_delete_access(menu_item, user_id)
+        await self.access_control.check_menu_item_delete_access(menu_item, user_id)
         await self.menu_item_service.delete_by_slug_or_raise(menu_item_slug)
         await self.session.commit()
 
@@ -95,7 +95,7 @@ class MenuApplication:
         display_order: int = 0,
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_update_access(menu_item, user_id)
+        await self.access_control.check_menu_item_update_access(menu_item, user_id)
 
         await self.menu_image_service.upload_image(
             menu_item_id=menu_item.id,
@@ -115,7 +115,7 @@ class MenuApplication:
         self, menu_item_slug: str, image_id: int, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_update_access(menu_item, user_id)
+        await self.access_control.check_menu_item_update_access(menu_item, user_id)
 
         await self.menu_image_service.delete_image(image_id)
         await self.session.commit()
@@ -129,7 +129,7 @@ class MenuApplication:
         self, menu_item_slug: str, image_id: int, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_update_access(menu_item, user_id)
+        await self.access_control.check_menu_item_update_access(menu_item, user_id)
 
         await self.menu_image_service.set_primary_image(image_id)
         await self.session.commit()

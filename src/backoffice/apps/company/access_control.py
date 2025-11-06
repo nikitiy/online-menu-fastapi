@@ -23,9 +23,6 @@ class CompanyAccessControl:
         user_id: int,
         permission: MenuItemPermission,
     ) -> None:
-        if menu_item.is_template:
-            return
-
         if not menu_item.owner_company_id:
             raise ForbiddenError(
                 "Menu item must belong to a company for access control"
@@ -51,26 +48,34 @@ class CompanyAccessControl:
 
         if not self._has_permission(role, permission):
             raise ForbiddenError(
-                f"User does not have permission to perform this action. "
+                f"User does not have permission to {permission.name.lower()} menu items. "
                 f"Required permission: {permission.name}, User role: {role.value}"
             )
 
-    async def check_read_access(self, menu_item: MenuItem, user_id: int) -> None:
+    async def check_menu_item_read_access(
+        self, menu_item: MenuItem, user_id: int
+    ) -> None:
         await self.check_menu_item_permission(
             menu_item, user_id, MenuItemPermission.READ
         )
 
-    async def check_create_access(self, company_id: int, user_id: int) -> None:
+    async def check_menu_item_create_access(
+        self, company_id: int, user_id: int
+    ) -> None:
         await self.check_company_permission(
             company_id, user_id, MenuItemPermission.CREATE
         )
 
-    async def check_update_access(self, menu_item: MenuItem, user_id: int) -> None:
+    async def check_menu_item_update_access(
+        self, menu_item: MenuItem, user_id: int
+    ) -> None:
         await self.check_menu_item_permission(
             menu_item, user_id, MenuItemPermission.UPDATE
         )
 
-    async def check_delete_access(self, menu_item: MenuItem, user_id: int) -> None:
+    async def check_menu_item_delete_access(
+        self, menu_item: MenuItem, user_id: int
+    ) -> None:
         await self.check_menu_item_permission(
             menu_item, user_id, MenuItemPermission.DELETE
         )
