@@ -1,7 +1,11 @@
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
-from src.backoffice.core.exceptions import NotFoundError, SubdomainAlreadyTaken
+from src.backoffice.core.exceptions import (
+    ForbiddenError,
+    NotFoundError,
+    SubdomainAlreadyTaken,
+)
 
 
 async def subdomain_already_taken_handler(
@@ -15,4 +19,10 @@ async def subdomain_already_taken_handler(
 async def not_found_handler(_request: Request, exc: NotFoundError) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND, content={"detail": str(exc)}
+    )
+
+
+async def forbidden_handler(_request: Request, exc: ForbiddenError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN, content={"detail": str(exc)}
     )

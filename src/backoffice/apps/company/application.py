@@ -15,7 +15,6 @@ from src.backoffice.apps.company.services import (
     CompanyMemberService,
     CompanyService,
 )
-from src.backoffice.core.exceptions import NotFoundError
 
 
 class CompanyApplication:
@@ -49,10 +48,7 @@ class CompanyApplication:
         return branch
 
     async def get_branch_by_id(self, branch_id: int) -> CompanyBranch:
-        branch = await self.company_branch_service.get_branch_by_id(branch_id)
-        if not branch:
-            raise NotFoundError(f"Company branch with id {branch_id} not found")
-        return branch
+        return await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
 
     async def get_branches_by_company(self, company_id: int) -> List[CompanyBranch]:
         return await self.company_branch_service.get_branches_by_company(company_id)
@@ -60,15 +56,12 @@ class CompanyApplication:
     async def update_branch(
         self, branch_id: int, branch_data: CompanyBranchUpdate
     ) -> CompanyBranch:
-        branch = await self.company_branch_service.update_branch(branch_id, branch_data)
-        if not branch:
-            raise NotFoundError(f"Company branch with id {branch_id} not found")
+        branch = await self.company_branch_service.update_branch_or_raise(
+            branch_id, branch_data
+        )
         await self.session.commit()
         return branch
 
-    async def delete_branch(self, branch_id: int) -> bool:
-        result = await self.company_branch_service.delete_branch(branch_id)
-        if not result:
-            raise NotFoundError(f"Company branch with id {branch_id} not found")
+    async def delete_branch(self, branch_id: int) -> None:
+        await self.company_branch_service.delete_branch_or_raise(branch_id)
         await self.session.commit()
-        return result

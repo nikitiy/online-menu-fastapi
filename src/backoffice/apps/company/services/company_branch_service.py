@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from src.backoffice.apps.company.repositories import (
     CompanyRepository,
 )
 from src.backoffice.apps.company.schemas import CompanyBranchCreate, CompanyBranchUpdate
+from src.backoffice.core.exceptions import NotFoundError
 
 
 class CompanyBranchService:
@@ -19,17 +20,26 @@ class CompanyBranchService:
     async def create_branch(self, branch_data: CompanyBranchCreate) -> CompanyBranch:
         return await self.repository.create(**branch_data.model_dump())
 
-    async def get_branch_by_id(self, branch_id: int) -> Optional[CompanyBranch]:
-        return await self.repository.get_by_id(branch_id)
+    async def get_branch_by_id_or_raise(self, branch_id: int) -> CompanyBranch:
+        branch = await self.repository.get_by_id(branch_id)
+        if not branch:
+            raise NotFoundError(f"Company branch with id {branch_id} not found")
+        return branch
 
     async def get_branches_by_company(self, company_id: int) -> List[CompanyBranch]:
         return await self.repository.get_all(filters={"company_id": company_id})
 
-    async def update_branch(
+    async def update_branch_or_raise(
         self, branch_id: int, branch_data: CompanyBranchUpdate
-    ) -> Optional[CompanyBranch]:
-        update_data = branch_data.model_dump(exclude_unset=True)
-        return await self.repository.update(branch_id, **update_data)
+    ) -> CompanyBranch:
+        updated_branch = await self.repository.update(
+            branch_id, **branch_data.model_dump(exclude_unset=True)
+        )
+        if not updated_branch:
+            raise NotFoundError(f"Company branch with id {branch_id} not found")
+        return updated_branch
 
-    async def delete_branch(self, branch_id: int) -> bool:
-        return await self.repository.delete(branch_id)
+    async def delete_branch_or_raise(self, branch_id: int) -> None:
+        result = await self.repository.delete(branch_id)
+        if not result:
+            raise NotFoundError(f"Company branch with id {branch_id} not found")

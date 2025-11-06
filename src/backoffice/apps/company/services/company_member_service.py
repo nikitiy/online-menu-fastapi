@@ -2,8 +2,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backoffice.apps.company.models import CompanyMember
 from src.backoffice.apps.company.models.types import CompanyRole
-from src.backoffice.apps.company.repositories import (CompanyMemberRepository,
-                                                      CompanyRepository)
+from src.backoffice.apps.company.repositories import (
+    CompanyMemberRepository,
+    CompanyRepository,
+)
 from src.backoffice.apps.company.schemas import CompanyMemberCreate
 
 
@@ -38,3 +40,9 @@ class CompanyMemberService:
         )
 
         return member
+
+    async def get_user_role_in_company(
+        self, user_id: int, company_id: int
+    ) -> CompanyRole | None:
+        member = await self.repository.get_by_company_and_user(company_id, user_id)
+        return member.role if member else None

@@ -108,7 +108,7 @@ class MenuItemRepository(BaseRepository[MenuItem]):
     async def get_templates(self, skip: int = 0, limit: int = 100) -> List[MenuItem]:
         result = await self.session.execute(
             select(MenuItem)
-            .where(MenuItem.is_template == True)
+            .where(MenuItem.is_template.is_(True))
             .offset(skip)
             .limit(limit)
         )
@@ -134,6 +134,29 @@ class MenuItemRepository(BaseRepository[MenuItem]):
         menu_items = list(result.scalars().all())
 
         # Load parent chains for all categories
+        for menu_item in menu_items:
+            if menu_item.category:
+                await self._load_category_parent_chain(menu_item.category)
+
+        return menu_items
+
+    async def list_by_company(
+        self,
+        company_id: int,
+    ) -> List[MenuItem]:
+        stmt = (
+            select(MenuItem)
+            .where(MenuItem.owner_company_id == company_id)
+            .options(
+                selectinload(MenuItem.images),
+                selectinload(MenuItem.category).selectinload(Category.parent),
+            )
+            .order_by(MenuItem.created_at.desc())
+        )
+
+        result = await self.session.execute(stmt)
+        menu_items = list(result.scalars().all())
+
         for menu_item in menu_items:
             if menu_item.category:
                 await self._load_category_parent_chain(menu_item.category)

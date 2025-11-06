@@ -4,8 +4,13 @@ from fastapi.openapi.utils import get_openapi
 
 from src.backoffice.api.v1 import api_router
 from src.backoffice.core.config import cors_settings, logging_settings
-from src.backoffice.core.exceptions import NotFoundError, SubdomainAlreadyTaken
+from src.backoffice.core.exceptions import (
+    ForbiddenError,
+    NotFoundError,
+    SubdomainAlreadyTaken,
+)
 from src.backoffice.core.handlers import (
+    forbidden_handler,
     not_found_handler,
     subdomain_already_taken_handler,
 )
@@ -68,6 +73,7 @@ def create_app() -> FastAPI:
     # Exception handlers
     app.add_exception_handler(SubdomainAlreadyTaken, subdomain_already_taken_handler)  # type: ignore[arg-type]
     app.add_exception_handler(NotFoundError, not_found_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(ForbiddenError, forbidden_handler)  # type: ignore[arg-type]
 
     # Routers
     app.include_router(api_router, prefix="/api/v1")

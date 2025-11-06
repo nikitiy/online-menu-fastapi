@@ -6,7 +6,7 @@ from src.backoffice.apps.company.models import Company
 from src.backoffice.apps.company.repositories import CompanyRepository
 from src.backoffice.apps.company.schemas import CompanyCreate
 from src.backoffice.apps.site.services import SiteService
-from src.backoffice.core.exceptions import SubdomainAlreadyTaken
+from src.backoffice.core.exceptions import NotFoundError, SubdomainAlreadyTaken
 
 
 class CompanyService:
@@ -35,3 +35,9 @@ class CompanyService:
 
     async def get_accessible_companies_for_user(self, user_id: int) -> List[Company]:
         return await self.repository.select_user_companies(user_id)
+
+    async def get_by_subdomain_or_raise(self, subdomain: str) -> Company:
+        company = await self.repository.get_by_subdomain(subdomain)
+        if not company:
+            raise NotFoundError(f"Company with subdomain '{subdomain}' not found")
+        return company
