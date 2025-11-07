@@ -5,10 +5,10 @@ from sqlalchemy import CHAR, CheckConstraint, ForeignKey, Integer, UniqueConstra
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.backoffice.models import Base, IdMixin
+from src.backoffice.models import Base, CreatedUpdatedMixin, IdMixin
 
 
-class QRCode(IdMixin, Base):
+class QRCode(IdMixin, CreatedUpdatedMixin, Base):
     __tablename__ = "qr_codes"
 
     company_branch_id: Mapped[int] = mapped_column(

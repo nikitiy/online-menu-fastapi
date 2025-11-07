@@ -26,3 +26,9 @@ async def forbidden_handler(_request: Request, exc: ForbiddenError) -> JSONRespo
     return JSONResponse(
         status_code=status.HTTP_403_FORBIDDEN, content={"detail": str(exc)}
     )
+
+
+async def value_error_handler(_request: Request, exc: ValueError) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST, content={"detail": str(exc)}
+    )

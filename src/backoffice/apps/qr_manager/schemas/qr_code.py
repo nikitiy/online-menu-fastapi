@@ -30,13 +30,10 @@ class QRCodeUpdate(BaseModel):
 class QRCodeInDB(QRCodeBase):
     """QR code in the database schema"""
 
-    id: int
     company_branch_id: int
     url_hash: str
     scan_count: int
     last_scanned: Optional[datetime]
-    created_at: datetime
-    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 

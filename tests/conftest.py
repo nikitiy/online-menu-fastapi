@@ -3,6 +3,8 @@ from typing import AsyncGenerator
 import httpx
 import pytest_asyncio
 from fastapi import FastAPI
+from sqlalchemy import JSON, DateTime, Table
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -13,10 +15,20 @@ from src.backoffice.models.all import (
     CompanyBranch,
     CompanyMember,
     OAuthAccount,
+    QRCode,
     RefreshToken,
     Site,
     User,
 )
+
+
+def adapt_table_for_sqlite(table: Table) -> None:
+    """Adapt PostgreSQL-specific types to SQLite-compatible types"""
+    for column in table.columns:
+        if isinstance(column.type, JSONB):
+            column.type = JSON()
+        elif isinstance(column.type, TIMESTAMP):
+            column.type = DateTime()
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -34,11 +46,13 @@ async def test_session() -> AsyncGenerator[AsyncSession, None]:
         Company.__table__,
         CompanyBranch.__table__,
         CompanyMember.__table__,
+        QRCode.__table__,
         Site.__table__,
     ]
 
     async with engine.begin() as conn:
         for table in tables_to_create:
+            adapt_table_for_sqlite(table)
             await conn.run_sync(table.create, checkfirst=True)
 
     async_session = async_sessionmaker(

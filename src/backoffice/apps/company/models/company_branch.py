@@ -3,10 +3,10 @@ from typing import List, Optional
 from sqlalchemy import Float, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.backoffice.models import Base, IdMixin
+from src.backoffice.models import Base, CreatedUpdatedMixin, IdMixin
 
 
-class CompanyBranch(Base, IdMixin):
+class CompanyBranch(Base, IdMixin, CreatedUpdatedMixin):
     __tablename__ = "company_branches"
     __repr_fields__ = ("company_id", "name", "address_id")
 

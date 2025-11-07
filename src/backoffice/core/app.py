@@ -14,6 +14,7 @@ from src.backoffice.core.handlers import (
     forbidden_handler,
     not_found_handler,
     subdomain_already_taken_handler,
+    value_error_handler,
 )
 from src.backoffice.core.logging import configure_logging
 from src.backoffice.core.middleware import AuthMiddleware, RequestContextMiddleware
@@ -75,6 +76,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(SubdomainAlreadyTaken, subdomain_already_taken_handler)  # type: ignore[arg-type]
     app.add_exception_handler(NotFoundError, not_found_handler)  # type: ignore[arg-type]
     app.add_exception_handler(ForbiddenError, forbidden_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(ValueError, value_error_handler)  # type: ignore[arg-type]
 
     # Routers
     app.include_router(api_router, prefix="/api/v1")

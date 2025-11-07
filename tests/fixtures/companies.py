@@ -9,13 +9,27 @@ from src.backoffice.apps.company.models.types import (
     CuisineCategory,
 )
 from src.backoffice.apps.company.schemas import CompanyCreate
-from src.backoffice.apps.company.services import CompanyService
+from src.backoffice.apps.company.services import (
+    CompanyBranchService,
+    CompanyMemberService,
+    CompanyService,
+)
 from tests.fixtures.factories import CompanyFactory, CompanyMemberFactory
 
 
 @pytest_asyncio.fixture
 async def company_service(test_session: AsyncSession) -> CompanyService:
     return CompanyService(test_session)
+
+
+@pytest_asyncio.fixture
+async def company_branch_service(test_session: AsyncSession) -> CompanyBranchService:
+    return CompanyBranchService(test_session)
+
+
+@pytest_asyncio.fixture
+async def company_member_service(test_session: AsyncSession) -> CompanyMemberService:
+    return CompanyMemberService(test_session)
 
 
 @pytest_asyncio.fixture

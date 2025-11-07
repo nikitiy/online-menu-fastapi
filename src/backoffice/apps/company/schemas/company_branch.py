@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
@@ -41,12 +40,9 @@ class CompanyBranchUpdate(BaseModel):
 class CompanyBranchInDB(CompanyBranchBase):
     """Company branch in the database schema"""
 
-    id: int
     company_id: int
     is_active: bool
     is_verified: bool
-    created_at: datetime
-    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 

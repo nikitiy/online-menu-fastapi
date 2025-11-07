@@ -75,6 +75,11 @@ class QRCodeService:
         if not update_dict:
             return qr_code
 
+        if "qr_options" in update_dict and qr_code.qr_options:
+            existing_options = qr_code.qr_options or {}
+            new_options = update_dict["qr_options"] or {}
+            update_dict["qr_options"] = {**existing_options, **new_options}
+
         updated_qr_code = await self.repository.update(qr_code.id, **update_dict)
         if not updated_qr_code:
             raise NotFoundError(f"QR code with hash '{url_hash}' not found")
