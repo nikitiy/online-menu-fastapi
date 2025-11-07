@@ -3,7 +3,6 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backoffice.apps.account.services import UserService
-from src.backoffice.apps.company.access_control import CompanyAccessControl
 from src.backoffice.apps.company.models import Company, CompanyBranch
 from src.backoffice.apps.company.models.types import CompanyRole
 from src.backoffice.apps.company.schemas import (
@@ -21,6 +20,12 @@ from src.backoffice.apps.company.services import (
     CompanyMemberService,
     CompanyService,
 )
+from src.backoffice.apps.qr_manager.services import QRCodeService
+from src.backoffice.core.access.access_control import CompanyAccessControl
+from src.backoffice.core.access.permissions import (
+    CompanyBranchPermission,
+    check_branch_permission,
+)
 
 
 class CompanyApplication:
@@ -31,6 +36,7 @@ class CompanyApplication:
         self.company_branch_service = CompanyBranchService(session)
         self.user_service = UserService(session)
         self.access_control = CompanyAccessControl(session)
+        self.qr_code_service = QRCodeService(session)
 
     async def create_company_with_owner(
         self, company_data: CompanyCreate, owner_user_id: int
@@ -53,32 +59,50 @@ class CompanyApplication:
     async def create_branch(
         self, branch_data: CompanyBranchCreate, user_id: int
     ) -> CompanyBranch:
-        await self.access_control.check_company_branch_create_access(
-            branch_data.company_id, user_id
+        await self.access_control.check_company_permission(
+            company_id=branch_data.company_id,
+            user_id=user_id,
+            permission=CompanyBranchPermission.CREATE,
+            permission_checker=check_branch_permission,
         )
         branch = await self.company_branch_service.create_branch(branch_data)
+        await self.session.flush()
+
+        await self.qr_code_service.create_qr_code_for_branch(branch.id)
+
         await self.session.commit()
         return branch
 
     async def get_branch_by_id(self, branch_id: int, user_id: int) -> CompanyBranch:
         branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
-        await self.access_control.check_company_branch_read_access(
-            branch.company_id, user_id
+        await self.access_control.check_company_permission(
+            company_id=branch.company_id,
+            user_id=user_id,
+            permission=CompanyBranchPermission.READ,
+            permission_checker=check_branch_permission,
         )
         return branch
 
     async def get_branches_by_company(
         self, company_id: int, user_id: int
     ) -> List[CompanyBranch]:
-        await self.access_control.check_company_branch_read_access(company_id, user_id)
+        await self.access_control.check_company_permission(
+            company_id=company_id,
+            user_id=user_id,
+            permission=CompanyBranchPermission.READ,
+            permission_checker=check_branch_permission,
+        )
         return await self.company_branch_service.get_branches_by_company(company_id)
 
     async def update_branch(
         self, branch_id: int, branch_data: CompanyBranchUpdate, user_id: int
     ) -> CompanyBranch:
         branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
-        await self.access_control.check_company_branch_update_access(
-            branch.company_id, user_id
+        await self.access_control.check_company_permission(
+            company_id=branch.company_id,
+            user_id=user_id,
+            permission=CompanyBranchPermission.UPDATE,
+            permission_checker=check_branch_permission,
         )
         updated_branch = await self.company_branch_service.update_branch_or_raise(
             branch_id, branch_data
@@ -88,8 +112,11 @@ class CompanyApplication:
 
     async def delete_branch(self, branch_id: int, user_id: int) -> None:
         branch = await self.company_branch_service.get_branch_by_id_or_raise(branch_id)
-        await self.access_control.check_company_branch_delete_access(
-            branch.company_id, user_id
+        await self.access_control.check_company_permission(
+            company_id=branch.company_id,
+            user_id=user_id,
+            permission=CompanyBranchPermission.DELETE,
+            permission_checker=check_branch_permission,
         )
         await self.company_branch_service.delete_branch_or_raise(branch_id)
         await self.session.commit()

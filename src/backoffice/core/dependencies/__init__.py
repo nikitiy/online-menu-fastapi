@@ -6,6 +6,7 @@ from .service_dependencies import (
     LocationApplicationDep,
     LocationSearchQueryDep,
     MenuApplicationDep,
+    QRCodeApplicationDep,
 )
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     "CompanyApplicationDep",
     "LocationApplicationDep",
     "MenuApplicationDep",
+    "QRCodeApplicationDep",
     # Query parameters
     "LocationSearchQueryDep",
 ]

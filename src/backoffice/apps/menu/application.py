@@ -3,12 +3,15 @@ from typing import List, Optional
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.backoffice.apps.company.access_control import CompanyAccessControl
-from src.backoffice.apps.company.permissions import MenuItemPermission
 from src.backoffice.apps.company.services import CompanyService
 from src.backoffice.apps.menu.models import MenuItem
 from src.backoffice.apps.menu.schemas import MenuItemCreate, MenuItemUpdate
 from src.backoffice.apps.menu.services import MenuImageService, MenuItemService
+from src.backoffice.core.access.access_control import CompanyAccessControl
+from src.backoffice.core.access.permissions import (
+    MenuItemPermission,
+    check_menu_item_permission,
+)
 from src.backoffice.core.services.s3_client import s3_client
 
 
@@ -24,7 +27,12 @@ class MenuApplication:
         menu_item = await self.menu_item_service.get_by_slug_with_relations_or_raise(
             slug
         )
-        await self.access_control.check_menu_item_read_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.READ,
+            permission_checker=check_menu_item_permission,
+        )
         await self._add_urls_to_images(menu_item)
         return menu_item
 
@@ -37,7 +45,10 @@ class MenuApplication:
             company_subdomain
         )
         await self.access_control.check_company_permission(
-            company.id, user_id, MenuItemPermission.READ
+            company_id=company.id,
+            user_id=user_id,
+            permission=MenuItemPermission.READ,
+            permission_checker=check_menu_item_permission,
         )
         menu_items = await self.menu_item_service.list_by_company(company_id=company.id)
         for menu_item in menu_items:
@@ -51,7 +62,10 @@ class MenuApplication:
             menu_item_data.company_subdomain
         )
         await self.access_control.check_company_permission(
-            company.id, user_id, MenuItemPermission.CREATE
+            company_id=company.id,
+            user_id=user_id,
+            permission=MenuItemPermission.CREATE,
+            permission_checker=check_menu_item_permission,
         )
 
         menu_item = await self.menu_item_service.create(menu_item_data)
@@ -67,7 +81,12 @@ class MenuApplication:
         self, menu_item_slug: str, update_data: MenuItemUpdate, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_menu_item_update_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.UPDATE,
+            permission_checker=check_menu_item_permission,
+        )
 
         await self.menu_item_service.update_by_slug_or_raise(
             menu_item_slug, update_data
@@ -81,7 +100,12 @@ class MenuApplication:
 
     async def delete_menu_item(self, menu_item_slug: str, user_id: int) -> None:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_menu_item_delete_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.DELETE,
+            permission_checker=check_menu_item_permission,
+        )
         await self.menu_item_service.delete_by_slug_or_raise(menu_item_slug)
         await self.session.commit()
 
@@ -95,7 +119,12 @@ class MenuApplication:
         display_order: int = 0,
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_menu_item_update_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.UPDATE,
+            permission_checker=check_menu_item_permission,
+        )
 
         await self.menu_image_service.upload_image(
             menu_item_id=menu_item.id,
@@ -115,7 +144,12 @@ class MenuApplication:
         self, menu_item_slug: str, image_id: int, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_menu_item_update_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.UPDATE,
+            permission_checker=check_menu_item_permission,
+        )
 
         await self.menu_image_service.delete_image(image_id)
         await self.session.commit()
@@ -129,7 +163,12 @@ class MenuApplication:
         self, menu_item_slug: str, image_id: int, user_id: int
     ) -> MenuItem:
         menu_item = await self.menu_item_service.get_by_slug_or_raise(menu_item_slug)
-        await self.access_control.check_menu_item_update_access(menu_item, user_id)
+        await self.access_control.check_resource_permission(
+            resource_company_id=menu_item.owner_company_id,
+            user_id=user_id,
+            permission=MenuItemPermission.UPDATE,
+            permission_checker=check_menu_item_permission,
+        )
 
         await self.menu_image_service.set_primary_image(image_id)
         await self.session.commit()

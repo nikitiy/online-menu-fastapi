@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from src.backoffice.api.health import router as health_router
 from src.backoffice.api.v1 import api_router
 from src.backoffice.core.config import cors_settings, logging_settings
 from src.backoffice.core.exceptions import (
@@ -77,6 +78,7 @@ def create_app() -> FastAPI:
 
     # Routers
     app.include_router(api_router, prefix="/api/v1")
+    app.include_router(health_router)
 
     return app
 

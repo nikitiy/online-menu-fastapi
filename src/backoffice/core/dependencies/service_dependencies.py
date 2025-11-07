@@ -9,6 +9,7 @@ from src.backoffice.apps.location.schemas.location_search_query import (
     LocationSearchQuery,
 )
 from src.backoffice.apps.menu.application import MenuApplication
+from src.backoffice.apps.qr_manager.application import QRCodeApplication
 from src.backoffice.core.dependencies.database import SessionDep
 
 # ==================== SERVICE DEPENDENCIES ====================
@@ -28,6 +29,10 @@ async def get_location_application(session: SessionDep) -> LocationApplication:
 
 async def get_menu_application(session: SessionDep) -> MenuApplication:
     return MenuApplication(session)
+
+
+async def get_qr_code_application(session: SessionDep) -> QRCodeApplication:
+    return QRCodeApplication(session)
 
 
 # ==================== ANNOTATED TYPES ====================
@@ -50,6 +55,11 @@ LocationApplicationDep: TypeAlias = Annotated[
 # Menu Application
 MenuApplicationDep: TypeAlias = Annotated[
     MenuApplication, Depends(get_menu_application)
+]
+
+# QR Code Application
+QRCodeApplicationDep: TypeAlias = Annotated[
+    QRCodeApplication, Depends(get_qr_code_application)
 ]
 
 # ==================== QUERY PARAMETER DEPENDENCIES ====================

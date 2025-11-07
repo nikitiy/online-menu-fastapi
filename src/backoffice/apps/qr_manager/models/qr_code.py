@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from sqlalchemy import (CHAR, CheckConstraint, ForeignKey, Integer,
-                        UniqueConstraint)
+from sqlalchemy import CHAR, CheckConstraint, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,6 +15,7 @@ class QRCode(IdMixin, Base):
         ForeignKey("company_branches.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
+        unique=True,
     )
     qr_options: Mapped[Optional[Dict[str, Any]]] = mapped_column(
         JSONB,
@@ -37,10 +37,11 @@ class QRCode(IdMixin, Base):
 
     # Relationships
     company_branch: Mapped["CompanyBranch"] = relationship(  # type: ignore
-        back_populates="qr_codes",
+        back_populates="qr_code",
     )
 
     __table_args__ = (
         UniqueConstraint("url_hash", name="uq_qr_codes_url_hash"),
+        UniqueConstraint("company_branch_id", name="uq_qr_codes_company_branch_id"),
         CheckConstraint("scan_count >= 0", name="ck_qr_codes_scan_count_nonneg"),
     )

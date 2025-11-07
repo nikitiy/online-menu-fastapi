@@ -3,7 +3,6 @@ from typing import List, Optional
 from sqlalchemy import Float, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.backoffice.apps.qr_manager.models import QRCode
 from src.backoffice.models import Base, IdMixin
 
 
@@ -41,7 +40,8 @@ class CompanyBranch(Base, IdMixin):
         back_populates="company_branch",
         cascade="all, delete-orphan",
     )
-    qr_codes: Mapped[List["QRCode"]] = relationship(  # type: ignore
+    qr_code: Mapped[Optional["QRCode"]] = relationship(  # type: ignore
         back_populates="company_branch",
         cascade="all, delete-orphan",
+        uselist=False,
     )
