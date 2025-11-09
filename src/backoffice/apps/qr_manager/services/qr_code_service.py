@@ -11,7 +11,7 @@ from src.backoffice.apps.company.services import CompanyBranchService
 from src.backoffice.apps.qr_manager.models import QRCode
 from src.backoffice.apps.qr_manager.repositories import QRCodeRepository
 from src.backoffice.apps.qr_manager.schemas import QRCodeCreate, QRCodeUpdate
-from src.backoffice.core.config import auth_settings
+from src.backoffice.core.config import base_settings
 from src.backoffice.core.exceptions import NotFoundError
 
 
@@ -87,7 +87,7 @@ class QRCodeService:
         return updated_qr_code
 
     def generate_qr_code_image_bytes(self, qr_code: QRCode) -> bytes:
-        qr_url = f"{auth_settings.frontend_url}/branch/{qr_code.company_branch_id}"
+        qr_url = f"{base_settings.redirect_serv_url}/redirect/{qr_code.url_hash}"
 
         qr_image = self._generate_qr_code_image(qr_url, qr_code.qr_options)
         img_buffer = io.BytesIO()
@@ -130,8 +130,7 @@ class QRCodeService:
     async def create_qr_code_for_branch(
         self, company_branch_id: int, qr_options: Optional[Dict[str, Any]] = None
     ) -> QRCode:
-        qr_url = f"{auth_settings.frontend_url}/branch/{company_branch_id}"
-        url_hash = self.generate_url_hash(qr_url)
+        url_hash = self.generate_url_hash(str(company_branch_id))
 
         qr_code_data = QRCodeCreate(
             company_branch_id=company_branch_id,

@@ -13,14 +13,6 @@ class DBSettings:
         self.database = os.environ["SQL_DATABASE"]
         self.user = os.environ["SQL_USER"]
         self.password = os.environ["SQL_PASSWORD"]
-        self.secret_key = os.environ.get("SECRET_KEY", "your-secret-key-here")
-        self.algorithm = os.environ.get("JWT_ALGORITHM", "HS256")
-        self.access_token_expire_minutes = int(
-            os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
-        )
-        self.refresh_token_expire_days = int(
-            os.environ.get("REFRESH_TOKEN_EXPIRE_DAYS", "7")
-        )
 
     @property
     def ASYNC_DATABASE_URL(self) -> str:  # noqa
@@ -101,6 +93,13 @@ class GeocodingSettings:
         return config and config.get("enabled", False)
 
 
+class BaseSettings:
+    def __init__(self):
+        self.frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+        self.backend_url = os.environ.get("BACKEND_URL", "http://localhost:8000")
+        self.redirect_serv_url = os.environ.get("REDIRECT_SERV_URL", "http://localhost")
+
+
 class AuthSettings:
     def __init__(self):
         # JWT settings
@@ -133,10 +132,6 @@ class AuthSettings:
         self.vk_redirect_uri = os.environ.get(
             "VK_REDIRECT_URI", "http://localhost:8000/api/v1/auth/vk/callback"
         )
-
-        # Base settings
-        self.frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-        self.backend_url = os.environ.get("BACKEND_URL", "http://localhost:8000")
 
 
 class S3Settings:
@@ -228,6 +223,7 @@ class CorsSettings:
 
 db_settings = DBSettings()
 geocoding_settings = GeocodingSettings()
+base_settings = BaseSettings()
 auth_settings = AuthSettings()
 s3_settings = S3Settings()
 kafka_settings = KafkaSettings()

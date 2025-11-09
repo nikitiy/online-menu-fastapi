@@ -9,7 +9,7 @@ from src.backoffice.apps.account.schemas import (
     Token,
     UserProfile,
 )
-from src.backoffice.core.config import auth_settings
+from src.backoffice.core.config import auth_settings, base_settings
 from src.backoffice.core.dependencies import AccountApplicationDep, AuthenticatedUserDep
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -63,7 +63,7 @@ async def get_oauth_providers():
             OAuthProvider(
                 name="google",
                 display_name="Google",
-                auth_url=f"{auth_settings.backend_url}/api/v1/auth/google",
+                auth_url=f"{base_settings.backend_url}/api/v1/auth/google",
                 enabled=True,
             )
         )
@@ -74,7 +74,7 @@ async def get_oauth_providers():
             OAuthProvider(
                 name="yandex",
                 display_name="Yandex",
-                auth_url=f"{auth_settings.backend_url}/api/v1/auth/yandex",
+                auth_url=f"{base_settings.backend_url}/api/v1/auth/yandex",
                 enabled=True,
             )
         )
@@ -85,7 +85,7 @@ async def get_oauth_providers():
             OAuthProvider(
                 name="vk",
                 display_name="VKontakte",
-                auth_url=f"{auth_settings.backend_url}/api/v1/auth/vk",
+                auth_url=f"{base_settings.backend_url}/api/v1/auth/vk",
                 enabled=True,
             )
         )
