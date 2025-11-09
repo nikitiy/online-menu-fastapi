@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.backoffice.apps.account.models import User
 from src.backoffice.apps.account.schemas import (
     LoginRequest,
+    OAuthUser,
     RegisterRequest,
     Token,
     UserCreate,
-    UserLogin,
 )
 from src.backoffice.core.config import auth_settings
 from src.backoffice.core.dependencies.database import SessionDep
@@ -132,7 +132,7 @@ class AuthService:
 
     async def handle_oauth_callback(
         self, provider: str, code: str, oauth_service
-    ) -> Tuple[Token, UserLogin, bool]:
+    ) -> Tuple[Token, OAuthUser, bool]:
         token_data = await oauth_service.get_access_token(code)
         if not token_data:
             raise HTTPException(
@@ -158,9 +158,9 @@ class AuthService:
         )
 
         tokens = await self.create_tokens_for_user(user)
-        user_login = UserLogin.model_validate(user)
+        oauth_user = OAuthUser.model_validate(user)
 
-        return tokens, user_login, is_new
+        return tokens, oauth_user, is_new
 
     @staticmethod
     def get_google_auth_url(google_oauth_service) -> dict:
@@ -178,38 +178,38 @@ class AuthService:
         return {"auth_url": auth_url}
 
     async def handle_google_callback(self, code: str, google_oauth_service) -> dict:
-        tokens, user_login, is_new = await self.handle_oauth_callback(
+        tokens, oauth_user, is_new = await self.handle_oauth_callback(
             "google", code, google_oauth_service
         )
         return {
             "access_token": tokens.access_token,
             "refresh_token": tokens.refresh_token,
             "token_type": "bearer",
-            "user": user_login,
+            "user": oauth_user,
             "is_new_user": is_new,
         }
 
     async def handle_yandex_callback(self, code: str, yandex_oauth_service) -> dict:
-        tokens, user_login, is_new = await self.handle_oauth_callback(
+        tokens, oauth_user, is_new = await self.handle_oauth_callback(
             "yandex", code, yandex_oauth_service
         )
         return {
             "access_token": tokens.access_token,
             "refresh_token": tokens.refresh_token,
             "token_type": "bearer",
-            "user": user_login,
+            "user": oauth_user,
             "is_new_user": is_new,
         }
 
     async def handle_vk_callback(self, code: str, vk_oauth_service) -> dict:
-        tokens, user_login, is_new = await self.handle_oauth_callback(
+        tokens, oauth_user, is_new = await self.handle_oauth_callback(
             "vk", code, vk_oauth_service
         )
         return {
             "access_token": tokens.access_token,
             "refresh_token": tokens.refresh_token,
             "token_type": "bearer",
-            "user": user_login,
+            "user": oauth_user,
             "is_new_user": is_new,
         }
 

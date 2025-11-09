@@ -3,11 +3,11 @@ from .auth import (
     OAuthCallback,
     OAuthProvider,
     OAuthProviders,
+    OAuthUser,
     RefreshTokenCreate,
     RefreshTokenRequest,
     RegisterRequest,
     Token,
-    UserLogin,
 )
 from .user import UserBase, UserCreate, UserCreateInternal, UserProfile, UserUpdate
 
@@ -24,9 +24,9 @@ __all__ = (
     "LoginRequest",
     "RegisterRequest",
     "RefreshTokenRequest",
-    "UserLogin",
     # OAuth schemas
     "OAuthCallback",
     "OAuthProvider",
     "OAuthProviders",
+    "OAuthUser",
 )

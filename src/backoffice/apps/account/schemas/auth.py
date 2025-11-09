@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class Token(BaseModel):
@@ -76,10 +76,10 @@ class OAuthProviders(BaseModel):
     providers: list[OAuthProvider]
 
 
-class UserLogin(BaseModel):
-    """User login schema"""
+class OAuthUser(BaseModel):
+    """OAuth user schema"""
 
-    user_id: int
+    user_id: int = Field(alias="id")
     email: str
     username: Optional[str] = None
     first_name: Optional[str] = None
@@ -88,3 +88,5 @@ class UserLogin(BaseModel):
     is_active: bool
     is_verified: bool
     is_superuser: bool
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)

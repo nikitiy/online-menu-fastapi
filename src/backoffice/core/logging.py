@@ -63,6 +63,8 @@ def configure_logging(level: str = "INFO", fmt: str = "json"):
     logging.getLogger("uvicorn.error").setLevel(level.upper())
     logging.getLogger("aiokafka").setLevel(level.upper())
     logging.getLogger("botocore").setLevel("WARNING")
+    logging.getLogger("httpcore").setLevel("WARNING")
+    logging.getLogger("httpx").setLevel("WARNING")
 
     _LOGGERS_INITIALIZED = True
 
